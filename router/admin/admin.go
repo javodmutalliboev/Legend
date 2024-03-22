@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"Legend/middleware"
 	"Legend/response"
 
 	"encoding/json"
@@ -19,6 +20,7 @@ func AdminRouter() *mux.Router {
 	}).Methods("GET")
 
 	router.HandleFunc("/login", Login()).Methods("POST")
+	router.HandleFunc("/logout", middleware.Chain(Logout(), middleware.Auth())).Methods("GET")
 
 	return router
 }
