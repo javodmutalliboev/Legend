@@ -44,15 +44,14 @@ func CreateAdminCLI() {
 
 	pass, err := password.HashPassword(pass)
 	if err != nil {
-		fmt.Println("Error hashing password!")
+		fmt.Printf("Error hashing password: %v!", err)
 		return
 	}
 
 	// Insert the admin into the database
 	_, err = database.Exec("INSERT INTO admin (name, surname, email, password) VALUES ($1, $2, $3, $4)", name, surname, email, pass)
 	if err != nil {
-		fmt.Println(err)
-		fmt.Println("Error inserting admin into database!")
+		fmt.Printf("Error inserting admin into database: %v!", err)
 		return
 	}
 

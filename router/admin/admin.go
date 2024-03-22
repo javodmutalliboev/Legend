@@ -15,7 +15,7 @@ func AdminRouter() *mux.Router {
 
 	router.HandleFunc("", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s: someone is requesting me", r.URL.Path)
-		json.NewEncoder(w).Encode(response.Response{Status: "success", Code: http.StatusOK, Data: "admin page"})
+		json.NewEncoder(w).Encode(response.Response{Status: "success", Code: http.StatusOK, Data: "admin route"})
 	}).Methods("GET")
 
 	router.HandleFunc("/login", Login()).Methods("POST")
