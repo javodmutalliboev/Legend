@@ -10,14 +10,14 @@ import (
 )
 
 func Router() *mux.Router {
-	router := mux.NewRouter()
+	router := mux.NewRouter().PathPrefix("/api/v1").Subrouter()
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response.Response{Status: "success", Code: http.StatusOK, Data: "legend server"})
-	})
+	}).Methods("GET")
 
-	adminRouter := admin.AdminRouter()
-	router.PathPrefix("/admin").Handler(adminRouter)
+	// attach admin.AdminRouter() to /api/v1 so that the path will be /api/v1/admin
+	router.PathPrefix("/admin").Handler(admin.AdminRouter())
 
 	return router
 }
