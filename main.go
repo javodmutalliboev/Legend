@@ -1,7 +1,12 @@
 package main
 
-import "log"
+import (
+	"Legend/router"
+	"net/http"
+)
 
 func main() {
-	log.Println("Legend server")
+	router := router.Router()
+
+	http.ListenAndServe(":8080", router)
 }
