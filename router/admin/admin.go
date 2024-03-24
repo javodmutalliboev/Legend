@@ -28,9 +28,6 @@ func AdminRouter() *mux.Router {
 	// POST /menu/sub will create a new sub menu
 	router.HandleFunc("/menu/sub", middleware.Chain(CreateSubMenu(), middleware.Auth())).Methods("POST")
 
-	// POST /sub-menu/sub will create a new sub menu
-	router.HandleFunc("/sub-menu/sub", middleware.Chain(CreateSubMenu(), middleware.Auth())).Methods("POST")
-
 	// GET /menus will return all menus
 	router.HandleFunc("/menus", middleware.Chain(GetMenus(), middleware.Auth())).Methods("GET")
 
