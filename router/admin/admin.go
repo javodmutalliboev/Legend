@@ -34,5 +34,8 @@ func AdminRouter() *mux.Router {
 	// GET /menus will return all menus
 	router.HandleFunc("/menus", middleware.Chain(GetMenus(), middleware.Auth())).Methods("GET")
 
+	// PATCH /menu will update a menu
+	router.HandleFunc("/menu", middleware.Chain(UpdateMenu(), middleware.Auth())).Methods("PATCH")
+
 	return router
 }

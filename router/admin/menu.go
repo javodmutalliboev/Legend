@@ -51,3 +51,33 @@ func GetMenus() http.HandlerFunc {
 		response.NewResponse("success", http.StatusOK, menus).Send(w)
 	}
 }
+
+func UpdateMenu() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var menu model.Menu
+
+		// Decode the incoming Menu json
+		err := json.NewDecoder(r.Body).Decode(&menu)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request").Send(w)
+			return
+		}
+
+		if menu.Title == "" {
+			log.Printf("%s: %s", r.URL.Path, "Title is required")
+			response.NewResponse("error", http.StatusBadRequest, "Title is required").Send(w)
+			return
+		}
+
+		// Update the menu in the database
+		err = menu.MenuUpdate()
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Menu updated").Send(w)
+	}
+}
