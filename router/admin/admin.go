@@ -22,5 +22,8 @@ func AdminRouter() *mux.Router {
 	router.HandleFunc("/login", Login()).Methods("POST")
 	router.HandleFunc("/logout", middleware.Chain(Logout(), middleware.Auth())).Methods("GET")
 
+	// POST /menu will create a new menu
+	router.HandleFunc("/menu", middleware.Chain(CreateMenu(), middleware.Auth())).Methods("POST")
+
 	return router
 }
