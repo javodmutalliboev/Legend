@@ -10,6 +10,7 @@ func CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		allowedOrigins := map[string]bool{
 			os.Getenv("ADMIN_ORIGIN"):  true,
+			os.Getenv("ADMIN_ORIGIN2"): true,
 			os.Getenv("CLIENT_ORIGIN"): true,
 			// Add more origins if you want
 		}
