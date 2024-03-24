@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Legend/middleware"
 	"Legend/response"
 	"Legend/router/admin"
 	"encoding/json"
@@ -18,6 +19,9 @@ func Router() *mux.Router {
 
 	// attach admin.AdminRouter() to /api/v1 so that the path will be /api/v1/admin
 	router.PathPrefix("/admin").Handler(admin.AdminRouter())
+
+	// Apply the CORS middleware to the router
+	router.Use(middleware.CORSMiddleware)
 
 	return router
 }
