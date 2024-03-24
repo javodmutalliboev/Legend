@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateMenu() http.HandlerFunc {
@@ -79,5 +82,27 @@ func UpdateMenu() http.HandlerFunc {
 		}
 
 		response.NewResponse("success", http.StatusOK, "Menu updated").Send(w)
+	}
+}
+
+func DeleteMenu() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request").Send(w)
+			return
+		}
+
+		// Delete the menu from the database
+		err = model.DeleteMenu(id)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Menu deleted").Send(w)
 	}
 }
