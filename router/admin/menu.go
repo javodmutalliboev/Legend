@@ -37,3 +37,17 @@ func CreateMenu() http.HandlerFunc {
 		response.NewResponse("success", http.StatusCreated, "Menu created").Send(w)
 	}
 }
+
+func GetMenus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get all menus from the database
+		menus, err := model.GetMenus()
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, menus).Send(w)
+	}
+}

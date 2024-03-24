@@ -8,10 +8,10 @@ import (
 type Response struct {
 	Status string `json:"status"`
 	Code   int    `json:"code"`
-	Data   string `json:"data"`
+	Data   any    `json:"data"`
 }
 
-func NewResponse(status string, code int, data string) *Response {
+func NewResponse(status string, code int, data any) *Response {
 	return &Response{
 		Status: status,
 		Code:   code,

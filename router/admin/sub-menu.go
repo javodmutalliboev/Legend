@@ -21,7 +21,7 @@ func CreateSubMenu() http.HandlerFunc {
 			return
 		}
 
-		if subMenu.ParentID == 0 {
+		if *subMenu.ParentID == 0 {
 			log.Printf("%s: %s", r.URL.Path, "Parent ID is required")
 			response.NewResponse("error", http.StatusBadRequest, "Parent ID is required").Send(w)
 			return
