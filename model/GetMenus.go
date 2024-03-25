@@ -2,12 +2,12 @@ package model
 
 import "Legend/database"
 
-func GetMenus() ([]Menu, error) {
+func GetMenus(menuType int) ([]Menu, error) {
 	database := database.DB()
 	defer database.Close()
 
 	// get menus with its children taken place in their corresponding parent
-	rows, err := database.Query("SELECT * FROM menu WHERE parent_id IS NULL")
+	rows, err := database.Query("SELECT * FROM menu WHERE parent_id IS NULL AND type = $1 ORDER BY id", menuType)
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +16,7 @@ func GetMenus() ([]Menu, error) {
 	var menus []Menu
 	for rows.Next() {
 		var menu Menu
-		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.Title, &menu.CreatedAt, &menu.UpdatedAt)
+		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.Title, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
 		if err != nil {
 			return nil, err
 		}
@@ -37,7 +37,7 @@ func getChildren(m *Menu) error {
 	database := database.DB()
 	defer database.Close()
 
-	rows, err := database.Query("SELECT * FROM menu WHERE parent_id = $1", m.ID)
+	rows, err := database.Query("SELECT * FROM menu WHERE parent_id = $1 AND type = $2 ORDER BY id", m.ID, m.Type)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func getChildren(m *Menu) error {
 
 	for rows.Next() {
 		var menu Menu
-		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.Title, &menu.CreatedAt, &menu.UpdatedAt)
+		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.Title, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
 		if err != nil {
 			return err
 		}

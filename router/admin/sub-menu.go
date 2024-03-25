@@ -33,6 +33,12 @@ func CreateSubMenu() http.HandlerFunc {
 			return
 		}
 
+		if subMenu.Type == 0 {
+			log.Printf("%s: %s", r.URL.Path, "Type is required")
+			response.NewResponse("error", http.StatusBadRequest, "Type is required").Send(w)
+			return
+		}
+
 		// Save the sub menu to the database
 		err = subMenu.SubMenuSave()
 		if err != nil {

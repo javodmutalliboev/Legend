@@ -29,6 +29,12 @@ func CreateMenu() http.HandlerFunc {
 			return
 		}
 
+		if menu.Type == 0 {
+			log.Printf("%s: %s", r.URL.Path, "Type is required")
+			response.NewResponse("error", http.StatusBadRequest, "Type is required").Send(w)
+			return
+		}
+
 		// Save the menu to the database
 		err = menu.MenuSave()
 		if err != nil {
@@ -43,8 +49,16 @@ func CreateMenu() http.HandlerFunc {
 
 func GetMenus() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		menuType, err := strconv.Atoi(vars["type"])
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request").Send(w)
+			return
+		}
+
 		// Get all menus from the database
-		menus, err := model.GetMenus()
+		menus, err := model.GetMenus(menuType)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)

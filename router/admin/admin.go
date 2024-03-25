@@ -28,14 +28,17 @@ func AdminRouter() *mux.Router {
 	// POST /menu/sub will create a new sub menu
 	router.HandleFunc("/menu/sub", middleware.Chain(CreateSubMenu(), middleware.Auth())).Methods("POST")
 
-	// GET /menus will return all menus
-	router.HandleFunc("/menus", middleware.Chain(GetMenus(), middleware.Auth())).Methods("GET")
+	// GET /menus/{type:[0-9]+} will return all menus of a type
+	router.HandleFunc("/menus/{type:[0-9]+}", middleware.Chain(GetMenus(), middleware.Auth())).Methods("GET")
 
 	// PATCH /menu will update a menu
 	router.HandleFunc("/menu", middleware.Chain(UpdateMenu(), middleware.Auth())).Methods("PATCH")
 
 	// DELETE /menu/{id:[0-9]+} will delete a menu
 	router.HandleFunc("/menu/{id:[0-9]+}", middleware.Chain(DeleteMenu(), middleware.Auth())).Methods("DELETE")
+
+	// GET /menu/types will return all menu types
+	router.HandleFunc("/menu/types", middleware.Chain(GetMenuTypes(), middleware.Auth())).Methods("GET")
 
 	return router
 }
