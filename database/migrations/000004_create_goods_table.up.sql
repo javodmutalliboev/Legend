@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS goods (
+    id BIGSERIAL PRIMARY KEY,
+    menu_id INT NOT NULL,
+    name TEXT NOT NULL,
+    brand TEXT NOT NULL,
+    sizes TEXT[] NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    discount DECIMAL(10, 2),
+    colors TEXT[] NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (menu_id) REFERENCES menu(id)
+);
