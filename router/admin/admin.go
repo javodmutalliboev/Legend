@@ -40,5 +40,8 @@ func AdminRouter() *mux.Router {
 	// GET /menu/types will return all menu types
 	router.HandleFunc("/menu/types", middleware.Chain(GetMenuTypes(), middleware.Auth())).Methods("GET")
 
+	// POST /goods will create a new goods
+	router.HandleFunc("/goods", middleware.Chain(CreateGoods(), middleware.Auth())).Methods("POST")
+
 	return router
 }
