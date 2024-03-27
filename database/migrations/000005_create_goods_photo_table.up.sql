@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS goods_photo (
+    id BIGSERIAL PRIMARY KEY,
+    goods_id BIGINT NOT NULL,
+    photo BYTEA NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (goods_id) REFERENCES goods(id)
+);
