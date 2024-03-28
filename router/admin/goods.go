@@ -135,3 +135,98 @@ func isImage(file *multipart.FileHeader) bool {
 
 	return strings.HasPrefix(contentType, "image/")
 }
+
+func UpdateGoods() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseMultipartForm(100 << 20) // 100MB
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request").Send(w)
+			return
+		}
+
+		// get the form data
+		formData := r.MultipartForm
+
+		// get the form data
+		goods_id_str := formData.Value["id"][0]
+		goods_id, err := strconv.Atoi(goods_id_str)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid goods_id").Send(w)
+			return
+		}
+
+		// declare a new goods
+		var goods model.Goods
+
+		goods.ID = int64(goods_id)
+
+		goods.Name = formData.Value["name"][0]
+
+		goods.Brand = formData.Value["brand"][0]
+
+		// photos
+		photos := formData.File["photo"]
+		for _, photo := range photos {
+			// check if the photo is of type image. It can be any type of image
+			if !isImage(photo) {
+				log.Printf("%s: %s", r.URL.Path, "Invalid image file")
+				response.NewResponse("error", http.StatusBadRequest, "Invalid image file").Send(w)
+				return
+			}
+
+			// check if the photo is not more than 16MB
+			if photo.Size > 16<<20 { // 16MB
+				log.Printf("%s: %s", r.URL.Path, "Image file too large")
+				response.NewResponse("error", http.StatusBadRequest, "Image file too large").Send(w)
+				return
+			}
+		}
+
+		goods.Sizes = formData.Value["size"]
+
+		priceStr := formData.Value["price"][0]
+		price, err := strconv.ParseFloat(priceStr, 64)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid price").Send(w)
+			return
+		}
+		goods.Price = price
+
+		discountStr := formData.Value["discount"][0]
+		discount, err := strconv.ParseFloat(discountStr, 64)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid discount").Send(w)
+			return
+		}
+		goods.Discount = discount
+
+		goods.Colors = formData.Value["color"]
+
+		goods.Description = formData.Value["description"][0]
+
+		// update the goods
+		err = model.UpdateGoods(&goods)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		// save the photos
+		for _, photo := range photos {
+			// save the photo
+			err := model.SavePhoto(photo, goods.ID)
+			if err != nil {
+				log.Printf("%s: %s", r.URL.Path, err)
+				response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+				return
+			}
+		}
+
+		response.NewResponse("success", http.StatusOK, "Goods updated").Send(w)
+	}
+}

@@ -47,5 +47,8 @@ func AdminRouter() *mux.Router {
 	// GET /goods/{menu_id:[0-9]+} will return all goods of a menu
 	router.HandleFunc("/goods/{menu_id:[0-9]+}", middleware.Chain(shared.GetGoods(), middleware.Auth())).Methods("GET")
 
+	// PUT /goods will update a goods
+	router.HandleFunc("/goods", middleware.Chain(UpdateGoods(), middleware.Auth())).Methods("PUT")
+
 	return router
 }

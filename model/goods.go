@@ -110,3 +110,15 @@ func getGoods(menu *Menu, goods *[]Goods) error {
 
 	return nil
 }
+
+func UpdateGoods(g *Goods) error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec("UPDATE goods SET name = $1, brand = $2, sizes = $3, price = $4, discount = $5, colors = $6, description = $7, updated_at = NOW() WHERE id = $8", g.Name, g.Brand, pq.Array(g.Sizes), g.Price, g.Discount, pq.Array(g.Colors), g.Description, g.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
