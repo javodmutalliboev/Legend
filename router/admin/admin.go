@@ -3,6 +3,7 @@ package admin
 import (
 	"Legend/middleware"
 	"Legend/response"
+	"Legend/shared"
 
 	"encoding/json"
 	"log"
@@ -44,7 +45,7 @@ func AdminRouter() *mux.Router {
 	router.HandleFunc("/goods", middleware.Chain(CreateGoods(), middleware.Auth())).Methods("POST")
 
 	// GET /goods/{menu_id:[0-9]+} will return all goods of a menu
-	router.HandleFunc("/goods/{menu_id:[0-9]+}", middleware.Chain(GetGoods(), middleware.Auth())).Methods("GET")
+	router.HandleFunc("/goods/{menu_id:[0-9]+}", middleware.Chain(shared.GetGoods(), middleware.Auth())).Methods("GET")
 
 	return router
 }
