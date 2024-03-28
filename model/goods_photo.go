@@ -44,3 +44,27 @@ func SavePhoto(photo *multipart.FileHeader, goods_id int64) error {
 
 	return nil
 }
+
+func GetGoodsPhotos(goods_id int64) ([]GoodsPhoto, error) {
+	db := database.DB()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id, goods_id, created_at FROM goods_photo WHERE goods_id = $1", goods_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var photos []GoodsPhoto
+	for rows.Next() {
+		var photo GoodsPhoto
+		err := rows.Scan(&photo.ID, &photo.GoodsID, &photo.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		photos = append(photos, photo)
+	}
+
+	return photos, nil
+}

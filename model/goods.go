@@ -51,3 +51,62 @@ func DeleteGoods(id int64) error {
 
 	return nil
 }
+
+func GetGoods(menu_id int) ([]Goods, error) {
+	db := database.DB()
+	defer db.Close()
+
+	menu, err := GetMenu(menu_id)
+	if err != nil {
+		return nil, err
+	}
+
+	var goods []Goods
+
+	err = getGoods(menu, &goods)
+	if err != nil {
+		return nil, err
+	}
+
+	return goods, nil
+}
+
+// dive into menu.Children recursively. when children is null, get goods from db by the id of the current menu and append it to goods
+func getGoods(menu *Menu, goods *[]Goods) error {
+	if menu.Children == nil {
+		// get goods from db by the id of the current menu and append it to goods
+		db := database.DB()
+		defer db.Close()
+
+		rows, err := db.Query("SELECT id, menu_id, name, brand, sizes, price, discount, colors, description, created_at, updated_at FROM goods WHERE menu_id = $1", menu.ID)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var g Goods
+			err = rows.Scan(&g.ID, &g.MenuID, &g.Name, &g.Brand, pq.Array(&g.Sizes), &g.Price, &g.Discount, pq.Array(&g.Colors), &g.Description, &g.CreatedAt, &g.UpdatedAt)
+			if err != nil {
+				return err
+			}
+
+			// get photos
+			photos, err := GetGoodsPhotos(g.ID)
+			if err != nil {
+				return err
+			}
+			g.Photos = photos
+
+			*goods = append(*goods, g)
+		}
+
+		return nil
+	}
+
+	for _, child := range menu.Children {
+		getGoods(&child, goods)
+	}
+
+	return nil
+}
