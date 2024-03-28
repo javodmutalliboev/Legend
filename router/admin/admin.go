@@ -30,7 +30,7 @@ func AdminRouter() *mux.Router {
 	router.HandleFunc("/menu/sub", middleware.Chain(CreateSubMenu(), middleware.Auth())).Methods("POST")
 
 	// GET /menus/{type:[0-9]+} will return all menus of a type
-	router.HandleFunc("/menus/{type:[0-9]+}", middleware.Chain(GetMenus(), middleware.Auth())).Methods("GET")
+	router.HandleFunc("/menus/{type:[0-9]+}", middleware.Chain(shared.GetMenus(), middleware.Auth())).Methods("GET")
 
 	// PATCH /menu will update a menu
 	router.HandleFunc("/menu", middleware.Chain(UpdateMenu(), middleware.Auth())).Methods("PATCH")

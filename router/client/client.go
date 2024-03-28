@@ -9,6 +9,9 @@ import (
 func ClientRouter() *mux.Router {
 	router := mux.NewRouter().PathPrefix("/api/v1/client").Subrouter()
 
+	// GET /menus/{type:[0-9]+} will return all menus of a type
+	router.HandleFunc("/menus/{type:[0-9]+}", shared.GetMenus()).Methods("GET")
+
 	// GET /goods/{menu_id:[0-9]+} will return all goods of a menu
 	router.HandleFunc("/goods/{menu_id:[0-9]+}", shared.GetGoods()).Methods("GET")
 
