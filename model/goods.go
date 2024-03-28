@@ -140,3 +140,16 @@ func deleteGoodsPhotos(goods_id int64) error {
 
 	return nil
 }
+
+func GetPhoto(id int64) ([]byte, error) {
+	db := database.DB()
+	defer db.Close()
+
+	var photo []byte
+	err := db.QueryRow("SELECT photo FROM goods_photo WHERE id = $1", id).Scan(&photo)
+	if err != nil {
+		return nil, err
+	}
+
+	return photo, nil
+}
