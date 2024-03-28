@@ -68,3 +68,21 @@ func GetGoodsPhotos(goods_id int64) ([]GoodsPhoto, error) {
 
 	return photos, nil
 }
+
+func DeletePhoto(id int64) error {
+	db := database.DB()
+	defer db.Close()
+
+	stmt, err := db.Prepare("DELETE FROM goods_photo WHERE id = $1")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -56,5 +56,8 @@ func AdminRouter() *mux.Router {
 	// GET /goods/photo/{id:[0-9]+} will return a photo of a goods
 	router.HandleFunc("/goods/photo/{id:[0-9]+}", middleware.Chain(shared.GetGoodsPhoto(), middleware.Auth())).Methods("GET")
 
+	// DELETE /goods/photo/{id:[0-9]+} will delete a photo of a goods
+	router.HandleFunc("/goods/photo/{id:[0-9]+}", middleware.Chain(DeleteGoodsPhoto(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }

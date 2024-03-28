@@ -254,3 +254,25 @@ func DeleteGoods() http.HandlerFunc {
 		response.NewResponse("success", http.StatusOK, "Goods deleted").Send(w)
 	}
 }
+
+func DeleteGoodsPhoto() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := mux.Vars(r)["id"]
+		photo_id, err := strconv.Atoi(id)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid photo_id").Send(w)
+			return
+		}
+
+		// delete the photo
+		err = model.DeletePhoto(int64(photo_id))
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Photo deleted").Send(w)
+	}
+}
