@@ -44,7 +44,13 @@ func DeleteGoods(id int64) error {
 	db := database.DB()
 	defer db.Close()
 
-	_, err := db.Exec("DELETE FROM goods WHERE id = $1", id)
+	// delete photos
+	err := deleteGoodsPhotos(id)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("DELETE FROM goods WHERE id = $1", id)
 	if err != nil {
 		return err
 	}
@@ -116,6 +122,18 @@ func UpdateGoods(g *Goods) error {
 	defer db.Close()
 
 	_, err := db.Exec("UPDATE goods SET name = $1, brand = $2, sizes = $3, price = $4, discount = $5, colors = $6, description = $7, updated_at = NOW() WHERE id = $8", g.Name, g.Brand, pq.Array(g.Sizes), g.Price, g.Discount, pq.Array(g.Colors), g.Description, g.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func deleteGoodsPhotos(goods_id int64) error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec("DELETE FROM goods_photo WHERE goods_id = $1", goods_id)
 	if err != nil {
 		return err
 	}

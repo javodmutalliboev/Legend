@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateGoods() http.HandlerFunc {
@@ -228,5 +230,27 @@ func UpdateGoods() http.HandlerFunc {
 		}
 
 		response.NewResponse("success", http.StatusOK, "Goods updated").Send(w)
+	}
+}
+
+func DeleteGoods() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := mux.Vars(r)["id"]
+		goods_id, err := strconv.Atoi(id)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid goods_id").Send(w)
+			return
+		}
+
+		// delete the goods
+		err = model.DeleteGoods(int64(goods_id))
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Goods deleted").Send(w)
 	}
 }

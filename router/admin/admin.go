@@ -50,5 +50,8 @@ func AdminRouter() *mux.Router {
 	// PUT /goods will update a goods
 	router.HandleFunc("/goods", middleware.Chain(UpdateGoods(), middleware.Auth())).Methods("PUT")
 
+	// DELETE /goods/{id:[0-9]+} will delete a goods
+	router.HandleFunc("/goods/{id:[0-9]+}", middleware.Chain(DeleteGoods(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }
