@@ -29,6 +29,5 @@ func DB() *sql.DB {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Successfully connected!")
 	return db
 }
