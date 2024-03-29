@@ -58,7 +58,7 @@ func DeleteGoods(id int64) error {
 	return nil
 }
 
-func GetGoods(menu_id int) ([]Goods, error) {
+func GetGoods(menu_id, page, limit int) ([]Goods, error) {
 	db := database.DB()
 	defer db.Close()
 
@@ -69,7 +69,7 @@ func GetGoods(menu_id int) ([]Goods, error) {
 
 	var goods []Goods
 
-	err = getGoods(menu, &goods)
+	err = getGoods(menu, &goods, page, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +78,14 @@ func GetGoods(menu_id int) ([]Goods, error) {
 }
 
 // dive into menu.Children recursively. when children is null, get goods from db by the id of the current menu and append it to goods
-func getGoods(menu *Menu, goods *[]Goods) error {
+func getGoods(menu *Menu, goods *[]Goods, page, limit int) error {
 	if menu.Children == nil {
 		// get goods from db by the id of the current menu and append it to goods
 		db := database.DB()
 		defer db.Close()
 
-		rows, err := db.Query("SELECT id, menu_id, name, brand, sizes, price, discount, colors, description, created_at, updated_at FROM goods WHERE menu_id = $1", menu.ID)
+		offset := (page - 1) * limit
+		rows, err := db.Query("SELECT id, menu_id, name, brand, sizes, price, discount, colors, description, created_at, updated_at FROM goods WHERE menu_id = $1 ORDER BY id LIMIT $2 OFFSET $3", menu.ID, limit, offset)
 		if err != nil {
 			return err
 		}
@@ -111,7 +112,7 @@ func getGoods(menu *Menu, goods *[]Goods) error {
 	}
 
 	for _, child := range menu.Children {
-		getGoods(&child, goods)
+		getGoods(&child, goods, page, limit)
 	}
 
 	return nil

@@ -12,6 +12,18 @@ import (
 
 func GetGoods() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// page and limit
+		page_str := r.URL.Query().Get("page")
+		limit_str := r.URL.Query().Get("limit")
+		page, err := strconv.Atoi(page_str)
+		if err != nil {
+			page = 1
+		}
+		limit, err := strconv.Atoi(limit_str)
+		if err != nil {
+			limit = 10
+		}
+
 		// get the menu_id
 		menu_id_str := mux.Vars(r)["menu_id"]
 		menu_id, err := strconv.Atoi(menu_id_str)
@@ -22,7 +34,7 @@ func GetGoods() http.HandlerFunc {
 		}
 
 		// get all goods of a menu
-		goods, err := model.GetGoods(menu_id)
+		goods, err := model.GetGoods(menu_id, page, limit)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
