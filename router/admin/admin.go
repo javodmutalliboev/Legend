@@ -62,5 +62,8 @@ func AdminRouter() *mux.Router {
 	// GET /goods/{id:[0-9]+} will return a goods
 	router.HandleFunc("/goods/id/{id:[0-9]+}", middleware.Chain(shared.GetGoodsByID(), middleware.Auth())).Methods("GET")
 
+	// POST /goods/photos will upload photos of a goods
+	router.HandleFunc("/goods/photos", middleware.Chain(UploadGoodsPhotos(), middleware.Auth())).Methods("POST")
+
 	return router
 }

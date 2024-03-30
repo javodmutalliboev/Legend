@@ -276,3 +276,65 @@ func DeleteGoodsPhoto() http.HandlerFunc {
 		response.NewResponse("success", http.StatusOK, "Photo deleted").Send(w)
 	}
 }
+
+func UploadGoodsPhotos() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseMultipartForm(100 << 20) // 100MB
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request").Send(w)
+			return
+		}
+
+		// get the form data
+		formData := r.MultipartForm
+
+		// get the form data
+		goods_id_str := formData.Value["id"][0]
+		goods_id, err := strconv.Atoi(goods_id_str)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid goods_id").Send(w)
+			return
+		}
+
+		// photos
+		photos := formData.File["photo"]
+
+		// check if there is no photo
+		if len(photos) == 0 {
+			log.Printf("%s: %s", r.URL.Path, "No photo")
+			response.NewResponse("error", http.StatusBadRequest, "No photo").Send(w)
+			return
+		}
+
+		for _, photo := range photos {
+			// check if the photo is of type image. It can be any type of image
+			if !isImage(photo) {
+				log.Printf("%s: %s", r.URL.Path, "Invalid image file")
+				response.NewResponse("error", http.StatusBadRequest, "Invalid image file").Send(w)
+				return
+			}
+
+			// check if the photo is not more than 16MB
+			if photo.Size > 16<<20 { // 16MB
+				log.Printf("%s: %s", r.URL.Path, "Image file too large")
+				response.NewResponse("error", http.StatusBadRequest, "Image file too large").Send(w)
+				return
+			}
+		}
+
+		// save the photos
+		for _, photo := range photos {
+			// save the photo
+			err := model.SavePhoto(photo, int64(goods_id))
+			if err != nil {
+				log.Printf("%s: %s", r.URL.Path, err)
+				response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+				return
+			}
+		}
+
+		response.NewResponse("success", http.StatusCreated, "Photos uploaded").Send(w)
+	}
+}
