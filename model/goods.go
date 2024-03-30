@@ -170,11 +170,9 @@ func UpdateGoods(g *Goods) error {
 		i++
 	}
 
-	if g.Discount != 0 {
-		fields = append(fields, fmt.Sprintf("discount = $%d", i))
-		args = append(args, g.Discount)
-		i++
-	}
+	fields = append(fields, fmt.Sprintf("discount = $%d", i))
+	args = append(args, g.Discount)
+	i++
 
 	if len(g.Colors) > 0 {
 		// first remove empty strings from g.Colors
