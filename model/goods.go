@@ -2,6 +2,8 @@ package model
 
 import (
 	"Legend/database"
+	"fmt"
+	"strings"
 
 	"github.com/lib/pq"
 )
@@ -122,7 +124,77 @@ func UpdateGoods(g *Goods) error {
 	db := database.DB()
 	defer db.Close()
 
-	_, err := db.Exec("UPDATE goods SET name = $1, brand = $2, sizes = $3, price = $4, discount = $5, colors = $6, description = $7, updated_at = NOW() WHERE id = $8", g.Name, g.Brand, pq.Array(g.Sizes), g.Price, g.Discount, pq.Array(g.Colors), g.Description, g.ID)
+	// extract Goods fields that are not empty
+	var fields []string
+	var args []interface{}
+	i := 1
+
+	if g.Name != "" {
+		fields = append(fields, fmt.Sprintf("name = $%d", i))
+		args = append(args, g.Name)
+		i++
+	}
+
+	if g.Brand != "" {
+		fields = append(fields, fmt.Sprintf("brand = $%d", i))
+		args = append(args, g.Brand)
+		i++
+	}
+
+	// ... repeat for other fields ...
+	if len(g.Sizes) > 0 {
+		// first remove empty strings from g.Sizes
+		var sizes []string
+		for _, size := range g.Sizes {
+			if size != "" {
+				sizes = append(sizes, size)
+			}
+		}
+		g.Sizes = sizes
+
+		fields = append(fields, fmt.Sprintf("sizes = $%d", i))
+		args = append(args, pq.Array(g.Sizes))
+		i++
+	}
+
+	if g.Price != 0 {
+		fields = append(fields, fmt.Sprintf("price = $%d", i))
+		args = append(args, g.Price)
+		i++
+	}
+
+	if g.Discount != 0 {
+		fields = append(fields, fmt.Sprintf("discount = $%d", i))
+		args = append(args, g.Discount)
+		i++
+	}
+
+	if len(g.Colors) > 0 {
+		// first remove empty strings from g.Colors
+		var colors []string
+		for _, color := range g.Colors {
+			if color != "" {
+				colors = append(colors, color)
+			}
+		}
+		g.Colors = colors
+
+		fields = append(fields, fmt.Sprintf("colors = $%d", i))
+		args = append(args, pq.Array(g.Colors))
+		i++
+	}
+
+	if g.Description != "" {
+		fields = append(fields, fmt.Sprintf("description = $%d", i))
+		args = append(args, g.Description)
+		i++
+	}
+
+	// build the SQL query
+	sql := fmt.Sprintf("UPDATE goods SET %s, updated_at = NOW() WHERE id = $%d", strings.Join(fields, ", "), i)
+	args = append(args, g.ID)
+
+	_, err := db.Exec(sql, args...)
 	if err != nil {
 		return err
 	}

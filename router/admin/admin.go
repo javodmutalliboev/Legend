@@ -47,8 +47,8 @@ func AdminRouter() *mux.Router {
 	// GET /goods/{menu_id:[0-9]+} will return all goods of a menu
 	router.HandleFunc("/goods/{menu_id:[0-9]+}", middleware.Chain(shared.GetGoods(), middleware.Auth())).Methods("GET")
 
-	// PUT /goods will update a goods
-	router.HandleFunc("/goods", middleware.Chain(UpdateGoods(), middleware.Auth())).Methods("PUT")
+	// PATCH /goods will update a goods
+	router.HandleFunc("/goods", middleware.Chain(UpdateGoods(), middleware.Auth())).Methods("PATCH")
 
 	// DELETE /goods/{id:[0-9]+} will delete a goods
 	router.HandleFunc("/goods/{id:[0-9]+}", middleware.Chain(DeleteGoods(), middleware.Auth())).Methods("DELETE")
