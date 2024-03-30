@@ -18,5 +18,8 @@ func ClientRouter() *mux.Router {
 	// GET /goods/photo/{id:[0-9]+} will return a photo of a goods
 	router.HandleFunc("/goods/photo/{id:[0-9]+}", shared.GetGoodsPhoto()).Methods("GET")
 
+	// GET /goods/{id:[0-9]+} will return a goods
+	router.HandleFunc("/goods/id/{id:[0-9]+}", shared.GetGoodsByID()).Methods("GET")
+
 	return router
 }

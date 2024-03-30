@@ -154,3 +154,23 @@ func GetPhoto(id int64) ([]byte, error) {
 
 	return photo, nil
 }
+
+func GetGoodsByID(id int64) (Goods, error) {
+	db := database.DB()
+	defer db.Close()
+
+	var g Goods
+	err := db.QueryRow("SELECT id, menu_id, name, brand, sizes, price, discount, colors, description, created_at, updated_at FROM goods WHERE id = $1", id).Scan(&g.ID, &g.MenuID, &g.Name, &g.Brand, pq.Array(&g.Sizes), &g.Price, &g.Discount, pq.Array(&g.Colors), &g.Description, &g.CreatedAt, &g.UpdatedAt)
+	if err != nil {
+		return Goods{}, err
+	}
+
+	// get photos
+	photos, err := GetGoodsPhotos(g.ID)
+	if err != nil {
+		return Goods{}, err
+	}
+	g.Photos = photos
+
+	return g, nil
+}
