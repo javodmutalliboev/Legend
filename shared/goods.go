@@ -34,13 +34,13 @@ func GetGoods() http.HandlerFunc {
 		}
 
 		// get all goods of a menu
-		goods, err := model.GetGoods(menu_id, page, limit)
+		goodsWrapper, err := model.GetGoods(menu_id, page, limit)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return
 		}
 
-		response.NewResponse("success", http.StatusOK, goods).Send(w)
+		response.NewResponse("success", http.StatusOK, *goodsWrapper).Send(w)
 	}
 }

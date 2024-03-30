@@ -60,7 +60,7 @@ func DeleteGoods(id int64) error {
 	return nil
 }
 
-func GetGoods(menu_id, page, limit int) ([]Goods, error) {
+func GetGoods(menu_id, page, limit int) (*GoodsWrapper, error) {
 	db := database.DB()
 	defer db.Close()
 
@@ -71,23 +71,30 @@ func GetGoods(menu_id, page, limit int) ([]Goods, error) {
 
 	var goods []Goods
 
-	err = getGoods(menu, &goods, page, limit)
+	err = getGoods(menu, &goods)
 	if err != nil {
 		return nil, err
 	}
 
-	return goods, nil
+	var goodsWrapper GoodsWrapper
+	// in goods array, only get the goods that are in the current page
+	for i := (page - 1) * limit; i < page*limit && i < len(goods); i++ {
+		goodsWrapper.Goods = append(goodsWrapper.Goods, goods[i])
+	}
+
+	goodsWrapper.Count = len(goods)
+
+	return &goodsWrapper, nil
 }
 
 // dive into menu.Children recursively. when children is null, get goods from db by the id of the current menu and append it to goods
-func getGoods(menu *Menu, goods *[]Goods, page, limit int) error {
+func getGoods(menu *Menu, goods *[]Goods) error {
 	if menu.Children == nil {
 		// get goods from db by the id of the current menu and append it to goods
 		db := database.DB()
 		defer db.Close()
 
-		offset := (page - 1) * limit
-		rows, err := db.Query("SELECT id, menu_id, name, brand, sizes, price, discount, colors, description, created_at, updated_at FROM goods WHERE menu_id = $1 ORDER BY id LIMIT $2 OFFSET $3", menu.ID, limit, offset)
+		rows, err := db.Query("SELECT id, menu_id, name, brand, sizes, price, discount, colors, description, created_at, updated_at FROM goods WHERE menu_id = $1 ORDER BY id", menu.ID)
 		if err != nil {
 			return err
 		}
@@ -114,7 +121,7 @@ func getGoods(menu *Menu, goods *[]Goods, page, limit int) error {
 	}
 
 	for _, child := range menu.Children {
-		getGoods(&child, goods, page, limit)
+		getGoods(&child, goods)
 	}
 
 	return nil
