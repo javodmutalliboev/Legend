@@ -1,6 +1,11 @@
 package model
 
-import "Legend/database"
+import (
+	"Legend/database"
+	"errors"
+	"fmt"
+	"strings"
+)
 
 type GeneralDiscount struct {
 	ID        int     `json:"id"`
@@ -23,7 +28,7 @@ func CreateGeneralDiscount(gd *GeneralDiscount) error {
 	return nil
 }
 
-func GetGeneralDiscountByMenuType(menuType int) (bool, error) {
+func CheckGeneralDiscountExistenceByMenuType(menuType int) (bool, error) {
 	db := database.DB()
 	defer db.Close()
 
@@ -34,4 +39,53 @@ func GetGeneralDiscountByMenuType(menuType int) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+func GetGeneralDiscountByMenuType(menuType int) (GeneralDiscount, error) {
+	db := database.DB()
+	defer db.Close()
+
+	var gd GeneralDiscount
+	err := db.QueryRow("SELECT * FROM general_discount WHERE menu_type = $1", menuType).Scan(&gd.ID, &gd.MenuType, &gd.Value, &gd.Unit, &gd.CreatedAt, &gd.UpdatedAt)
+	if err != nil {
+		return GeneralDiscount{}, err
+	}
+
+	return gd, nil
+}
+
+func UpdateGeneralDiscount(gd *GeneralDiscount) error {
+	db := database.DB()
+	defer db.Close()
+
+	var fields []string
+	var args []interface{}
+	i := 1
+
+	if gd.Value != 0 {
+		fields = append(fields, fmt.Sprintf("value = $%d", i))
+		args = append(args, gd.Value)
+		i++
+	}
+
+	if gd.Unit != "" {
+		fields = append(fields, fmt.Sprintf("unit = $%d", i))
+		args = append(args, gd.Unit)
+		i++
+	}
+
+	if len(fields) == 0 {
+		return errors.New("no fields to update")
+	}
+
+	// build the SQL query
+	sql := fmt.Sprintf("UPDATE general_discount SET %s, updated_at = NOW() WHERE menu_type = $%d", strings.Join(fields, ", "), i)
+	args = append(args, gd.MenuType)
+
+	_, err := db.Exec(sql, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

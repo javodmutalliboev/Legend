@@ -68,5 +68,11 @@ func AdminRouter() *mux.Router {
 	// POST /general_discount will create a new general discount
 	router.HandleFunc("/general_discount", middleware.Chain(CreateGeneralDiscount(), middleware.Auth())).Methods("POST")
 
+	// GET /general_discount/{menu_type:[0-9]+} will return a general discount
+	router.HandleFunc("/general_discount/{menu_type:[0-9]+}", middleware.Chain(shared.GetGeneralDiscount(), middleware.Auth())).Methods("GET")
+
+	// PATCH /general_discount will update a general discount
+	router.HandleFunc("/general_discount", middleware.Chain(UpdateGeneralDiscount(), middleware.Auth())).Methods("PATCH")
+
 	return router
 }
