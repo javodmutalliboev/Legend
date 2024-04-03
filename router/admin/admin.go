@@ -65,5 +65,8 @@ func AdminRouter() *mux.Router {
 	// POST /goods/photos will upload photos of a goods
 	router.HandleFunc("/goods/photos", middleware.Chain(UploadGoodsPhotos(), middleware.Auth())).Methods("POST")
 
+	// POST /general_discount will create a new general discount
+	router.HandleFunc("/general_discount", middleware.Chain(CreateGeneralDiscount(), middleware.Auth())).Methods("POST")
+
 	return router
 }
