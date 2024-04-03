@@ -89,3 +89,15 @@ func UpdateGeneralDiscount(gd *GeneralDiscount) error {
 
 	return nil
 }
+
+func DeleteGeneralDiscount(menuType int) error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec("DELETE FROM general_discount WHERE menu_type = $1", menuType)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

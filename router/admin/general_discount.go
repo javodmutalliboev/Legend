@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateGeneralDiscount() http.HandlerFunc {
@@ -73,5 +76,29 @@ func UpdateGeneralDiscount() http.HandlerFunc {
 		}
 
 		response.NewResponse("success", http.StatusOK, "General discount updated").Send(w)
+	}
+}
+
+func DeleteGeneralDiscount() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// we need menu_type
+
+		menu_type_str := mux.Vars(r)["menu_type"]
+		menu_type, err := strconv.Atoi(menu_type_str)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid menu_type").Send(w)
+			return
+		}
+
+		// delete the general_discount
+		err = model.DeleteGeneralDiscount(menu_type)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "General discount deleted").Send(w)
 	}
 }

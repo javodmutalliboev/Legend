@@ -74,5 +74,8 @@ func AdminRouter() *mux.Router {
 	// PATCH /general_discount will update a general discount
 	router.HandleFunc("/general_discount", middleware.Chain(UpdateGeneralDiscount(), middleware.Auth())).Methods("PATCH")
 
+	// DELETE /general_discount/{menu_type:[0-9]+} will delete a general discount
+	router.HandleFunc("/general_discount/{menu_type:[0-9]+}", middleware.Chain(DeleteGeneralDiscount(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }

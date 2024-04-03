@@ -21,5 +21,8 @@ func ClientRouter() *mux.Router {
 	// GET /goods/{id:[0-9]+} will return a goods
 	router.HandleFunc("/goods/id/{id:[0-9]+}", shared.GetGoodsByID()).Methods("GET")
 
+	// GET /general_discount/{menu_type:[0-9]+} will return a general discount
+	router.HandleFunc("/general_discount/{menu_type:[0-9]+}", shared.GetGeneralDiscount()).Methods("GET")
+
 	return router
 }
