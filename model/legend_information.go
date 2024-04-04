@@ -3,6 +3,8 @@ package model
 import (
 	"Legend/database"
 	"errors"
+	"fmt"
+	"strings"
 )
 
 type LegendInformation struct {
@@ -48,4 +50,40 @@ func GetLegendInformation() (LegendInformation, error) {
 	}
 
 	return li, nil
+}
+
+func UpdateLegendInformation(li *LegendInformation) error {
+	db := database.DB()
+	defer db.Close()
+
+	var fields []string
+	var args []interface{}
+	i := 1
+
+	if li.Heading != "" {
+		fields = append(fields, fmt.Sprintf("heading = $%d", i))
+		args = append(args, li.Heading)
+		i++
+	}
+
+	if li.Description != "" {
+		fields = append(fields, fmt.Sprintf("description = $%d", i))
+		args = append(args, li.Description)
+		i++
+	}
+
+	if len(fields) == 0 {
+		return errors.New("no fields to update")
+	}
+
+	// build the SQL query
+	sql := fmt.Sprintf("UPDATE legend_information SET %s, updated_at = NOW() WHERE id = $%d", strings.Join(fields, ", "), i)
+	args = append(args, li.ID)
+
+	_, err := db.Exec(sql, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

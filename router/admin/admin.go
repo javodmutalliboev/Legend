@@ -83,5 +83,8 @@ func AdminRouter() *mux.Router {
 	// GET /legend_information will get the legend information
 	router.HandleFunc("/legend_information", middleware.Chain(shared.GetLegendInformation(), middleware.Auth())).Methods("GET")
 
+	// PATCH /legend_information will update the legend information
+	router.HandleFunc("/legend_information", middleware.Chain(UpdateLegendInformation(), middleware.Auth())).Methods("PATCH")
+
 	return router
 }

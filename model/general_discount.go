@@ -62,11 +62,9 @@ func UpdateGeneralDiscount(gd *GeneralDiscount) error {
 	var args []interface{}
 	i := 1
 
-	if gd.Value != 0 {
-		fields = append(fields, fmt.Sprintf("value = $%d", i))
-		args = append(args, gd.Value)
-		i++
-	}
+	fields = append(fields, fmt.Sprintf("value = $%d", i))
+	args = append(args, gd.Value)
+	i++
 
 	if gd.Unit != "" {
 		fields = append(fields, fmt.Sprintf("unit = $%d", i))
