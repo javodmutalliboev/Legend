@@ -92,5 +92,8 @@ func AdminRouter() *mux.Router {
 	// POST /ctw_information will create the ctw information
 	router.HandleFunc("/ctw_information", middleware.Chain(CreateCTWInformation(), middleware.Auth())).Methods("POST")
 
+	// GET /ctw_information will get the ctw information
+	router.HandleFunc("/ctw_information", middleware.Chain(shared.GetCTWInformation(), middleware.Auth())).Methods("GET")
+
 	return router
 }

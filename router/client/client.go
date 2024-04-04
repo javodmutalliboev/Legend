@@ -27,5 +27,8 @@ func ClientRouter() *mux.Router {
 	// GET /legend_information will return legend_information
 	router.HandleFunc("/legend_information", shared.GetLegendInformation()).Methods("GET")
 
+	// GET /ctw_information will return ctw_information
+	router.HandleFunc("/ctw_information", shared.GetCTWInformation()).Methods("GET")
+
 	return router
 }

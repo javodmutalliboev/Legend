@@ -36,3 +36,16 @@ func CreateCTWInformation(ctw *CTWInformation) error {
 
 	return nil
 }
+
+func GetCTWInformation() (CTWInformation, error) {
+	db := database.DB()
+	defer db.Close()
+
+	var ctw CTWInformation
+	err := db.QueryRow("SELECT * FROM ctw_information").Scan(&ctw.ID, &ctw.Heading, &ctw.Description, &ctw.CreatedAt, &ctw.UpdatedAt)
+	if err != nil {
+		return ctw, err
+	}
+
+	return ctw, nil
+}
