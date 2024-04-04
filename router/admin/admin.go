@@ -86,5 +86,8 @@ func AdminRouter() *mux.Router {
 	// PATCH /legend_information will update the legend information
 	router.HandleFunc("/legend_information", middleware.Chain(UpdateLegendInformation(), middleware.Auth())).Methods("PATCH")
 
+	// DELETE /legend_information//{id:[0-9]+} will delete the legend information
+	router.HandleFunc("/legend_information/{id:[0-9]+}", middleware.Chain(DeleteLegendInformation(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }

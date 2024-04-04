@@ -87,3 +87,15 @@ func UpdateLegendInformation(li *LegendInformation) error {
 
 	return nil
 }
+
+func DeleteLegendInformation(id int) error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec("DELETE FROM legend_information WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

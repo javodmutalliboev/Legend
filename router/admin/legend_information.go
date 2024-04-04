@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateLegendInformation() http.HandlerFunc {
@@ -60,5 +63,26 @@ func UpdateLegendInformation() http.HandlerFunc {
 		}
 
 		response.NewResponse("success", http.StatusOK, "Legend information updated").Send(w)
+	}
+}
+
+func DeleteLegendInformation() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id_str := mux.Vars(r)["id"]
+		id, err := strconv.Atoi(id_str)
+		if err != nil {
+			log.Printf("%s: Error converting id to integer: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Error converting id to integer").Send(w)
+			return
+		}
+
+		err = model.DeleteLegendInformation(id)
+		if err != nil {
+			log.Printf("%s: Error deleting legend information: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Error deleting legend information").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Legend information deleted").Send(w)
 	}
 }
