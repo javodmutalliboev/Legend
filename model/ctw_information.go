@@ -3,6 +3,8 @@ package model
 import (
 	"Legend/database"
 	"errors"
+	"fmt"
+	"strings"
 )
 
 type CTWInformation struct {
@@ -48,4 +50,40 @@ func GetCTWInformation() (CTWInformation, error) {
 	}
 
 	return ctw, nil
+}
+
+func UpdateCTWInformation(ctw *CTWInformation) error {
+	db := database.DB()
+	defer db.Close()
+
+	var fields []string
+	var args []interface{}
+	i := 1
+
+	if ctw.Heading != "" {
+		fields = append(fields, fmt.Sprintf("heading = $%d", i))
+		args = append(args, ctw.Heading)
+		i++
+	}
+
+	if ctw.Description != "" {
+		fields = append(fields, fmt.Sprintf("description = $%d", i))
+		args = append(args, ctw.Description)
+		i++
+	}
+
+	if len(fields) == 0 {
+		return errors.New("no fields to update")
+	}
+
+	// build the SQL query
+	sql := fmt.Sprintf("UPDATE ctw_information SET %s, updated_at = NOW() WHERE id = $%d", strings.Join(fields, ", "), i)
+	args = append(args, ctw.ID)
+
+	_, err := db.Exec(sql, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
