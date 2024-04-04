@@ -98,5 +98,8 @@ func AdminRouter() *mux.Router {
 	// PATCH /ctw_information will update the ctw information
 	router.HandleFunc("/ctw_information", middleware.Chain(UpdateCTWInformation(), middleware.Auth())).Methods("PATCH")
 
+	// DELETE /ctw_information//{id:[0-9]+} will delete the ctw information
+	router.HandleFunc("/ctw_information/{id:[0-9]+}", middleware.Chain(DeleteCTWInformation(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }

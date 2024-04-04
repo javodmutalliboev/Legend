@@ -87,3 +87,15 @@ func UpdateCTWInformation(ctw *CTWInformation) error {
 
 	return nil
 }
+
+func DeleteCTWInformation(id int) error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec("DELETE FROM ctw_information WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

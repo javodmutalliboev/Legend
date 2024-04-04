@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateCTWInformation() http.HandlerFunc {
@@ -60,5 +63,26 @@ func UpdateCTWInformation() http.HandlerFunc {
 		}
 
 		response.NewResponse("success", http.StatusOK, "CTW information updated").Send(w)
+	}
+}
+
+func DeleteCTWInformation() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id_str := mux.Vars(r)["id"]
+		id, err := strconv.Atoi(id_str)
+		if err != nil {
+			log.Printf("%s: Error converting id to integer: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Error converting id to integer").Send(w)
+			return
+		}
+
+		err = model.DeleteCTWInformation(id)
+		if err != nil {
+			log.Printf("%s: Error deleting ctw information: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Error deleting ctw information").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "CTW information deleted").Send(w)
 	}
 }
