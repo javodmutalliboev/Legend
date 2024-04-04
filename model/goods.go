@@ -282,3 +282,34 @@ func GetHomeGoods(menu_type int) ([]Goods, error) {
 
 	return goods, nil
 }
+
+func GetRecommendedGoods(menu_type int) ([]Goods, error) {
+	db := database.DB()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT g.id, g.menu_id, g.name, g.brand, g.sizes, g.price, g.discount, g.colors, g.description, g.created_at, g.updated_at FROM goods g, menu m WHERE g.menu_id = m.id AND m.type = $1 ORDER BY RANDOM() LIMIT 10", menu_type)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var goods []Goods
+	for rows.Next() {
+		var g Goods
+		err = rows.Scan(&g.ID, &g.MenuID, &g.Name, &g.Brand, pq.Array(&g.Sizes), &g.Price, &g.Discount, pq.Array(&g.Colors), &g.Description, &g.CreatedAt, &g.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		// get photos
+		photos, err := GetGoodsPhotos(g.ID)
+		if err != nil {
+			return nil, err
+		}
+		g.Photos = photos
+
+		goods = append(goods, g)
+	}
+
+	return goods, nil
+}

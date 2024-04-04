@@ -52,12 +52,35 @@ func GetHomeGoods() http.HandlerFunc {
 		menu_type, err := strconv.Atoi(menu_type_str)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
-			response.NewResponse("error", http.StatusBadRequest, "Invalid menu_id").Send(w)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid menu_type").Send(w)
 			return
 		}
 
 		// get home goods
 		goods, err := model.GetHomeGoods(menu_type)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, goods).Send(w)
+	}
+}
+
+func GetRecommendedGoods() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// get the menu_id
+		menu_type_str := mux.Vars(r)["menu_type"]
+		menu_type, err := strconv.Atoi(menu_type_str)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid menu_type").Send(w)
+			return
+		}
+
+		// get recommended goods
+		goods, err := model.GetRecommendedGoods(menu_type)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)

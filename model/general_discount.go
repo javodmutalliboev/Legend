@@ -14,13 +14,14 @@ type GeneralDiscount struct {
 	Unit      string  `json:"unit"`
 	CreatedAt string  `json:"created_at"`
 	UpdatedAt string  `json:"updated_at"`
+	Title     string  `json:"title"`
 }
 
 func CreateGeneralDiscount(gd *GeneralDiscount) error {
 	db := database.DB()
 	defer db.Close()
 
-	_, err := db.Exec("INSERT INTO general_discount (menu_type, value, unit) VALUES ($1, $2, $3)", gd.MenuType, gd.Value, gd.Unit)
+	_, err := db.Exec("INSERT INTO general_discount (menu_type, title, value, unit) VALUES ($1, $2, $3, $4)", gd.MenuType, gd.Title, gd.Value, gd.Unit)
 	if err != nil {
 		return err
 	}
@@ -46,7 +47,7 @@ func GetGeneralDiscountByMenuType(menuType int) (GeneralDiscount, error) {
 	defer db.Close()
 
 	var gd GeneralDiscount
-	err := db.QueryRow("SELECT * FROM general_discount WHERE menu_type = $1", menuType).Scan(&gd.ID, &gd.MenuType, &gd.Value, &gd.Unit, &gd.CreatedAt, &gd.UpdatedAt)
+	err := db.QueryRow("SELECT * FROM general_discount WHERE menu_type = $1", menuType).Scan(&gd.ID, &gd.MenuType, &gd.Value, &gd.Unit, &gd.CreatedAt, &gd.UpdatedAt, &gd.Title)
 	if err != nil {
 		return GeneralDiscount{}, err
 	}
@@ -61,6 +62,12 @@ func UpdateGeneralDiscount(gd *GeneralDiscount) error {
 	var fields []string
 	var args []interface{}
 	i := 1
+
+	if gd.Title != "" {
+		fields = append(fields, fmt.Sprintf("title = $%d", i))
+		args = append(args, gd.Title)
+		i++
+	}
 
 	fields = append(fields, fmt.Sprintf("value = $%d", i))
 	args = append(args, gd.Value)
