@@ -77,5 +77,8 @@ func AdminRouter() *mux.Router {
 	// DELETE /general_discount/{menu_type:[0-9]+} will delete a general discount
 	router.HandleFunc("/general_discount/{menu_type:[0-9]+}", middleware.Chain(DeleteGeneralDiscount(), middleware.Auth())).Methods("DELETE")
 
+	// POST /legend_information will create the legend information
+	router.HandleFunc("/legend_information", middleware.Chain(CreateLegendInformation(), middleware.Auth())).Methods("POST")
+
 	return router
 }
