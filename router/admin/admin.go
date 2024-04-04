@@ -89,5 +89,8 @@ func AdminRouter() *mux.Router {
 	// DELETE /legend_information//{id:[0-9]+} will delete the legend information
 	router.HandleFunc("/legend_information/{id:[0-9]+}", middleware.Chain(DeleteLegendInformation(), middleware.Auth())).Methods("DELETE")
 
+	// POST /ctw_information will create the ctw information
+	router.HandleFunc("/ctw_information", middleware.Chain(CreateCTWInformation(), middleware.Auth())).Methods("POST")
+
 	return router
 }
