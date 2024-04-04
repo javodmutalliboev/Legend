@@ -36,3 +36,16 @@ func CreateLegendInformation(li *LegendInformation) error {
 
 	return nil
 }
+
+func GetLegendInformation() (LegendInformation, error) {
+	db := database.DB()
+	defer db.Close()
+
+	var li LegendInformation
+	err := db.QueryRow("SELECT * FROM legend_information").Scan(&li.ID, &li.Heading, &li.Description, &li.CreatedAt, &li.UpdatedAt)
+	if err != nil {
+		return li, err
+	}
+
+	return li, nil
+}
