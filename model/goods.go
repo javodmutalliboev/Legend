@@ -313,3 +313,42 @@ func GetRecommendedGoods(menu_type int) ([]Goods, error) {
 
 	return goods, nil
 }
+
+func SearchGoods(menu_type, page, limit int, keyword string) (*GoodsWrapper, error) {
+	db := database.DB()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT g.id, g.menu_id, g.name, g.brand, g.sizes, g.price, g.discount, g.colors, g.description, g.created_at, g.updated_at FROM goods g, menu m WHERE g.menu_id = m.id AND m.type = $1 AND (g.name ILIKE $2 OR g.brand ILIKE $2 OR g.description ILIKE $2) ORDER BY g.id", menu_type, "%"+keyword+"%")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var goods []Goods
+	for rows.Next() {
+		var g Goods
+		err = rows.Scan(&g.ID, &g.MenuID, &g.Name, &g.Brand, pq.Array(&g.Sizes), &g.Price, &g.Discount, pq.Array(&g.Colors), &g.Description, &g.CreatedAt, &g.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		// get photos
+		photos, err := GetGoodsPhotos(g.ID)
+		if err != nil {
+			return nil, err
+		}
+		g.Photos = photos
+
+		goods = append(goods, g)
+	}
+
+	var goodsWrapper GoodsWrapper
+	// in goods array, only get the goods that are in the current page
+	for i := (page - 1) * limit; i < page*limit && i < len(goods); i++ {
+		goodsWrapper.Goods = append(goodsWrapper.Goods, goods[i])
+	}
+
+	goodsWrapper.Count = len(goods)
+
+	return &goodsWrapper, nil
+}

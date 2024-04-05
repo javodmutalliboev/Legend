@@ -36,5 +36,8 @@ func ClientRouter() *mux.Router {
 	// GET /recommended/goods/{menu_type:[0-9]+} will return recommended goods
 	router.HandleFunc("/recommended/goods/{menu_type:[0-9]+}", shared.GetRecommendedGoods()).Methods("GET")
 
+	// GET /goods/search/{menu_type:[0-9]+} will return search goods
+	router.HandleFunc("/goods/search/{menu_type:[0-9]+}", shared.SearchGoods()).Methods("GET")
+
 	return router
 }

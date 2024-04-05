@@ -101,5 +101,8 @@ func AdminRouter() *mux.Router {
 	// DELETE /ctw_information//{id:[0-9]+} will delete the ctw information
 	router.HandleFunc("/ctw_information/{id:[0-9]+}", middleware.Chain(DeleteCTWInformation(), middleware.Auth())).Methods("DELETE")
 
+	// GET /goods/search/{menu_type:[0-9]+} will search goods by keyword
+	router.HandleFunc("/goods/search/{menu_type:[0-9]+}", middleware.Chain(shared.SearchGoods(), middleware.Auth())).Methods("GET")
+
 	return router
 }
