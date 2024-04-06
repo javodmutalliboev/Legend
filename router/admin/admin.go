@@ -104,5 +104,8 @@ func AdminRouter() *mux.Router {
 	// GET /goods/search/{menu_type:[0-9]+} will search goods by keyword
 	router.HandleFunc("/goods/search/{menu_type:[0-9]+}", middleware.Chain(shared.SearchGoods(), middleware.Auth())).Methods("GET")
 
+	// GET /goods/with_discount/{menu_type:[0-9]+} will return goods with discount
+	router.HandleFunc("/goods/with_discount/{menu_type:[0-9]+}", middleware.Chain(shared.GetGoodsWithDiscount(), middleware.Auth())).Methods("GET")
+
 	return router
 }
