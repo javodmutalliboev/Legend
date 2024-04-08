@@ -161,3 +161,25 @@ func GetGoodsWithDiscount() http.HandlerFunc {
 		response.NewResponse("success", http.StatusOK, *goodsWrapper).Send(w)
 	}
 }
+
+func GetMenuGoods() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		menu_id_str := mux.Vars(r)["id"]
+		menu_id, err := strconv.Atoi(menu_id_str)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusBadRequest, "Invalid id").Send(w)
+			return
+		}
+
+		// get goods of a menu
+		goods, err := model.GetMenuGoods(menu_id)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err)
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, goods).Send(w)
+	}
+}

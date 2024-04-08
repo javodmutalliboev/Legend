@@ -391,3 +391,34 @@ func GetGoodsWithDiscount(menu_type, page, limit int) (*GoodsWrapper, error) {
 
 	return &goodsWrapper, nil
 }
+
+func GetMenuGoods(menu_id int) ([]Goods, error) {
+	db := database.DB()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id FROM goods WHERE menu_id = $1 ORDER BY id", menu_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var goods []Goods
+	for rows.Next() {
+		var g Goods
+		err = rows.Scan(&g.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		// get photos
+		photos, err := GetGoodsPhotos(g.ID)
+		if err != nil {
+			return nil, err
+		}
+		g.Photos = photos
+
+		goods = append(goods, g)
+	}
+
+	return goods, nil
+}
