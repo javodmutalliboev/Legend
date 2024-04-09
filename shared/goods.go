@@ -172,14 +172,25 @@ func GetMenuGoods() http.HandlerFunc {
 			return
 		}
 
+		page_str := r.URL.Query().Get("page")
+		limit_str := r.URL.Query().Get("limit")
+		page, err := strconv.Atoi(page_str)
+		if err != nil {
+			page = 1
+		}
+		limit, err := strconv.Atoi(limit_str)
+		if err != nil {
+			limit = 10
+		}
+
 		// get goods of a menu
-		goods, err := model.GetMenuGoods(menu_id)
+		GoodsWrapper, err := model.GetMenuGoods(menu_id, page, limit)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return
 		}
 
-		response.NewResponse("success", http.StatusOK, goods).Send(w)
+		response.NewResponse("success", http.StatusOK, *GoodsWrapper).Send(w)
 	}
 }

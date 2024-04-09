@@ -392,7 +392,7 @@ func GetGoodsWithDiscount(menu_type, page, limit int) (*GoodsWrapper, error) {
 	return &goodsWrapper, nil
 }
 
-func GetMenuGoods(menu_id int) ([]Goods, error) {
+func GetMenuGoods(menu_id, page, limit int) (*GoodsWrapper, error) {
 	db := database.DB()
 	defer db.Close()
 
@@ -420,5 +420,13 @@ func GetMenuGoods(menu_id int) ([]Goods, error) {
 		goods = append(goods, g)
 	}
 
-	return goods, nil
+	var goodsWrapper GoodsWrapper
+	// in goods array, only get the goods that are in the current page
+	for i := (page - 1) * limit; i < page*limit && i < len(goods); i++ {
+		goodsWrapper.Goods = append(goodsWrapper.Goods, goods[i])
+	}
+
+	goodsWrapper.Count = len(goods)
+
+	return &goodsWrapper, nil
 }
