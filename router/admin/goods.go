@@ -41,9 +41,13 @@ func CreateGoods() http.HandlerFunc {
 		}
 		goods.MenuID = menu_id
 
-		goods.Name = formData.Value["name"][0]
+		goods.NameUz = formData.Value["name_uz"][0]
+		goods.NameRu = formData.Value["name_ru"][0]
+		goods.NameEn = formData.Value["name_en"][0]
 
-		goods.Brand = formData.Value["brand"][0]
+		goods.BrandUz = formData.Value["brand_uz"][0]
+		goods.BrandRu = formData.Value["brand_ru"][0]
+		goods.BrandEn = formData.Value["brand_en"][0]
 
 		// photos
 		photos := formData.File["photo"]
@@ -83,9 +87,13 @@ func CreateGoods() http.HandlerFunc {
 		}
 		goods.Discount = discount
 
-		goods.Colors = formData.Value["color"]
+		goods.ColorsUz = formData.Value["color_uz"]
+		goods.ColorsRu = formData.Value["color_ru"]
+		goods.ColorsEn = formData.Value["color_en"]
 
-		goods.Description = formData.Value["description"][0]
+		goods.DescriptionUz = formData.Value["description_uz"][0]
+		goods.DescriptionRu = formData.Value["description_ru"][0]
+		goods.DescriptionEn = formData.Value["description_en"][0]
 
 		// create the goods
 		goods_id, err := model.CreateGoods(&goods)
@@ -164,9 +172,13 @@ func UpdateGoods() http.HandlerFunc {
 
 		goods.ID = int64(goods_id)
 
-		goods.Name = formData.Value["name"][0]
+		goods.NameUz = formData.Value["name_uz"][0]
+		goods.NameRu = formData.Value["name_ru"][0]
+		goods.NameEn = formData.Value["name_en"][0]
 
-		goods.Brand = formData.Value["brand"][0]
+		goods.BrandUz = formData.Value["brand_uz"][0]
+		goods.BrandRu = formData.Value["brand_ru"][0]
+		goods.BrandEn = formData.Value["brand_en"][0]
 
 		// photos
 		photos := formData.File["photo"]
@@ -206,13 +218,22 @@ func UpdateGoods() http.HandlerFunc {
 		}
 		goods.Discount = discount
 
-		goods.Colors = formData.Value["color"]
+		goods.ColorsUz = formData.Value["color_uz"]
+		goods.ColorsRu = formData.Value["color_ru"]
+		goods.ColorsEn = formData.Value["color_en"]
 
-		goods.Description = formData.Value["description"][0]
+		goods.DescriptionUz = formData.Value["description_uz"][0]
+		goods.DescriptionRu = formData.Value["description_ru"][0]
+		goods.DescriptionEn = formData.Value["description_en"][0]
 
 		// update the goods
 		err = model.UpdateGoods(&goods)
 		if err != nil {
+			if err.Error() == "no fields to update" {
+				log.Printf("%s: %s", r.URL.Path, err)
+				response.NewResponse("error", http.StatusBadRequest, "No fields to update").Send(w)
+				return
+			}
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return

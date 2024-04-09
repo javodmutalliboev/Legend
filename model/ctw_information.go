@@ -8,11 +8,15 @@ import (
 )
 
 type CTWInformation struct {
-	ID          int    `json:"id"`
-	Heading     string `json:"heading"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	ID            int    `json:"id"`
+	HeadingUz     string `json:"heading_uz"`
+	HeadingRu     string `json:"heading_ru"`
+	HeadingEn     string `json:"heading_en"`
+	DescriptionUz string `json:"description_uz"`
+	DescriptionRu string `json:"description_ru"`
+	DescriptionEn string `json:"description_en"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
 }
 
 func CreateCTWInformation(ctw *CTWInformation) error {
@@ -31,7 +35,7 @@ func CreateCTWInformation(ctw *CTWInformation) error {
 		return errors.New("ctw information already exists")
 	}
 
-	_, err = db.Exec("INSERT INTO ctw_information (heading, description) VALUES ($1, $2)", ctw.Heading, ctw.Description)
+	_, err = db.Exec("INSERT INTO ctw_information (heading_uz, heading_ru, heading_en, description_uz, description_ru, description_en) VALUES ($1, $2, $3, $4, $5, %6)", ctw.HeadingUz, ctw.HeadingRu, ctw.HeadingEn, ctw.DescriptionUz, ctw.DescriptionRu, ctw.DescriptionEn)
 	if err != nil {
 		return err
 	}
@@ -44,7 +48,7 @@ func GetCTWInformation() (CTWInformation, error) {
 	defer db.Close()
 
 	var ctw CTWInformation
-	err := db.QueryRow("SELECT * FROM ctw_information").Scan(&ctw.ID, &ctw.Heading, &ctw.Description, &ctw.CreatedAt, &ctw.UpdatedAt)
+	err := db.QueryRow("SELECT * FROM ctw_information").Scan(&ctw.ID, &ctw.HeadingUz, &ctw.HeadingRu, &ctw.HeadingEn, &ctw.DescriptionUz, &ctw.DescriptionRu, &ctw.DescriptionEn, &ctw.CreatedAt, &ctw.UpdatedAt)
 	if err != nil {
 		return ctw, err
 	}
@@ -60,15 +64,39 @@ func UpdateCTWInformation(ctw *CTWInformation) error {
 	var args []interface{}
 	i := 1
 
-	if ctw.Heading != "" {
-		fields = append(fields, fmt.Sprintf("heading = $%d", i))
-		args = append(args, ctw.Heading)
+	if ctw.HeadingUz != "" {
+		fields = append(fields, fmt.Sprintf("heading_uz = $%d", i))
+		args = append(args, ctw.HeadingUz)
 		i++
 	}
 
-	if ctw.Description != "" {
-		fields = append(fields, fmt.Sprintf("description = $%d", i))
-		args = append(args, ctw.Description)
+	if ctw.HeadingRu != "" {
+		fields = append(fields, fmt.Sprintf("heading_ru = $%d", i))
+		args = append(args, ctw.HeadingRu)
+		i++
+	}
+
+	if ctw.HeadingEn != "" {
+		fields = append(fields, fmt.Sprintf("heading_en = $%d", i))
+		args = append(args, ctw.HeadingEn)
+		i++
+	}
+
+	if ctw.DescriptionUz != "" {
+		fields = append(fields, fmt.Sprintf("description_uz = $%d", i))
+		args = append(args, ctw.DescriptionUz)
+		i++
+	}
+
+	if ctw.DescriptionRu != "" {
+		fields = append(fields, fmt.Sprintf("description_ru = $%d", i))
+		args = append(args, ctw.DescriptionRu)
+		i++
+	}
+
+	if ctw.DescriptionEn != "" {
+		fields = append(fields, fmt.Sprintf("description_en = $%d", i))
+		args = append(args, ctw.DescriptionEn)
 		i++
 	}
 

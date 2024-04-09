@@ -23,9 +23,21 @@ func CreateMenu() http.HandlerFunc {
 			return
 		}
 
-		if menu.Title == "" {
-			log.Printf("%s: %s", r.URL.Path, "Title is required")
-			response.NewResponse("error", http.StatusBadRequest, "Title is required").Send(w)
+		if menu.TitleUz == "" {
+			log.Printf("%s: %s", r.URL.Path, "title_uz is required")
+			response.NewResponse("error", http.StatusBadRequest, "title_uz is required").Send(w)
+			return
+		}
+
+		if menu.TitleRu == "" {
+			log.Printf("%s: %s", r.URL.Path, "title_ru is required")
+			response.NewResponse("error", http.StatusBadRequest, "title_ru is required").Send(w)
+			return
+		}
+
+		if menu.TitleEn == "" {
+			log.Printf("%s: %s", r.URL.Path, "title_en is required")
+			response.NewResponse("error", http.StatusBadRequest, "title_en is required").Send(w)
 			return
 		}
 
@@ -59,15 +71,14 @@ func UpdateMenu() http.HandlerFunc {
 			return
 		}
 
-		if menu.Title == "" {
-			log.Printf("%s: %s", r.URL.Path, "Title is required")
-			response.NewResponse("error", http.StatusBadRequest, "Title is required").Send(w)
-			return
-		}
-
 		// Update the menu in the database
 		err = menu.MenuUpdate()
 		if err != nil {
+			if err.Error() == "no fields to update" {
+				log.Printf("%s: %s", r.URL.Path, err)
+				response.NewResponse("error", http.StatusBadRequest, "No fields to update").Send(w)
+				return
+			}
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return

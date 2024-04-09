@@ -8,11 +8,15 @@ import (
 )
 
 type LegendInformation struct {
-	ID          int    `json:"id"`
-	Heading     string `json:"heading"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	ID            int    `json:"id"`
+	HeadingUz     string `json:"heading_uz"`
+	HeadingRu     string `json:"heading_ru"`
+	HeadingEn     string `json:"heading_en"`
+	DescriptionUz string `json:"description_uz"`
+	DescriptionRu string `json:"description_ru"`
+	DescriptionEn string `json:"description_en"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
 }
 
 func CreateLegendInformation(li *LegendInformation) error {
@@ -31,7 +35,7 @@ func CreateLegendInformation(li *LegendInformation) error {
 		return errors.New("legend information already exists")
 	}
 
-	_, err = db.Exec("INSERT INTO legend_information (heading, description) VALUES ($1, $2)", li.Heading, li.Description)
+	_, err = db.Exec("INSERT INTO legend_information (heading_uz, heading_ru, heading_en, description_uz, description_ru, description_en) VALUES ($1, $2, $3, $4, $5, $6)", li.HeadingUz, li.HeadingRu, li.HeadingEn, li.DescriptionUz, li.DescriptionRu, li.DescriptionEn)
 	if err != nil {
 		return err
 	}
@@ -44,7 +48,7 @@ func GetLegendInformation() (LegendInformation, error) {
 	defer db.Close()
 
 	var li LegendInformation
-	err := db.QueryRow("SELECT * FROM legend_information").Scan(&li.ID, &li.Heading, &li.Description, &li.CreatedAt, &li.UpdatedAt)
+	err := db.QueryRow("SELECT * FROM legend_information").Scan(&li.ID, &li.HeadingUz, &li.HeadingRu, &li.HeadingEn, &li.DescriptionUz, &li.DescriptionRu, &li.DescriptionEn, &li.CreatedAt, &li.UpdatedAt)
 	if err != nil {
 		return li, err
 	}
@@ -60,15 +64,39 @@ func UpdateLegendInformation(li *LegendInformation) error {
 	var args []interface{}
 	i := 1
 
-	if li.Heading != "" {
-		fields = append(fields, fmt.Sprintf("heading = $%d", i))
-		args = append(args, li.Heading)
+	if li.HeadingUz != "" {
+		fields = append(fields, fmt.Sprintf("heading_uz = $%d", i))
+		args = append(args, li.HeadingUz)
 		i++
 	}
 
-	if li.Description != "" {
-		fields = append(fields, fmt.Sprintf("description = $%d", i))
-		args = append(args, li.Description)
+	if li.HeadingRu != "" {
+		fields = append(fields, fmt.Sprintf("heading_ru = $%d", i))
+		args = append(args, li.HeadingRu)
+		i++
+	}
+
+	if li.HeadingEn != "" {
+		fields = append(fields, fmt.Sprintf("heading_en = $%d", i))
+		args = append(args, li.HeadingEn)
+		i++
+	}
+
+	if li.DescriptionUz != "" {
+		fields = append(fields, fmt.Sprintf("description_uz = $%d", i))
+		args = append(args, li.DescriptionUz)
+		i++
+	}
+
+	if li.DescriptionRu != "" {
+		fields = append(fields, fmt.Sprintf("description_ru = $%d", i))
+		args = append(args, li.DescriptionRu)
+		i++
+	}
+
+	if li.DescriptionEn != "" {
+		fields = append(fields, fmt.Sprintf("description_en = $%d", i))
+		args = append(args, li.DescriptionEn)
 		i++
 	}
 

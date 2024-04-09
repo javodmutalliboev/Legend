@@ -21,7 +21,7 @@ func (m *Menu) SubMenuSave() error {
 	}
 
 	// save parent_id and title to the database
-	_, err = database.Exec("INSERT INTO menu (parent_id, title, type) VALUES ($1, $2, $3)", m.ParentID, m.Title, m.Type)
+	_, err = database.Exec("INSERT INTO menu (parent_id, title_uz, title_ru, title_en, type) VALUES ($1, $2, $3, $4, $5)", m.ParentID, m.TitleUz, m.TitleRu, m.TitleEn, m.Type)
 	if err != nil {
 		return err
 	}

@@ -27,9 +27,21 @@ func CreateSubMenu() http.HandlerFunc {
 			return
 		}
 
-		if subMenu.Title == "" {
-			log.Printf("%s: %s", r.URL.Path, "Title is required")
-			response.NewResponse("error", http.StatusBadRequest, "Title is required").Send(w)
+		if subMenu.TitleUz == "" {
+			log.Printf("%s: %s", r.URL.Path, "title_uz is required")
+			response.NewResponse("error", http.StatusBadRequest, "title_uz is required").Send(w)
+			return
+		}
+
+		if subMenu.TitleRu == "" {
+			log.Printf("%s: %s", r.URL.Path, "title_ru is required")
+			response.NewResponse("error", http.StatusBadRequest, "title_ru is required").Send(w)
+			return
+		}
+
+		if subMenu.TitleEn == "" {
+			log.Printf("%s: %s", r.URL.Path, "title_en is required")
+			response.NewResponse("error", http.StatusBadRequest, "title_en is required").Send(w)
 			return
 		}
 

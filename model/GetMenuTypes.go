@@ -15,7 +15,7 @@ func GetMenuTypes() ([]MenuType, error) {
 	var menuTypes []MenuType
 	for rows.Next() {
 		var menuType MenuType
-		err := rows.Scan(&menuType.ID, &menuType.Title, &menuType.CreatedAt, &menuType.UpdatedAt)
+		err := rows.Scan(&menuType.ID, &menuType.TitleUz, &menuType.TitleRu, &menuType.TitleEn, &menuType.CreatedAt, &menuType.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}

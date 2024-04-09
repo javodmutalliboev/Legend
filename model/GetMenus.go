@@ -16,7 +16,7 @@ func GetMenus(menuType int) ([]Menu, error) {
 	var menus []Menu
 	for rows.Next() {
 		var menu Menu
-		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.Title, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
+		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.TitleUz, &menu.TitleRu, &menu.TitleEn, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
 		if err != nil {
 			return nil, err
 		}
@@ -45,7 +45,7 @@ func getChildren(m *Menu) error {
 
 	for rows.Next() {
 		var menu Menu
-		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.Title, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
+		err := rows.Scan(&menu.ID, &menu.ParentID, &menu.TitleUz, &menu.TitleRu, &menu.TitleEn, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
 		if err != nil {
 			return err
 		}

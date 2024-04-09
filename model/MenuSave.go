@@ -11,7 +11,7 @@ func (m *Menu) MenuSave() error {
 	defer database.Close()
 
 	// save title to the database
-	_, err := database.Exec("INSERT INTO menu (title, type) VALUES ($1, $2)", m.Title, m.Type)
+	_, err := database.Exec("INSERT INTO menu (title_uz, title_ru, title_en, type) VALUES ($1, $2, $3, $4)", m.TitleUz, m.TitleRu, m.TitleEn, m.Type)
 	if err != nil {
 		return err
 	}
