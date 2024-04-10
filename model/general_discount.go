@@ -49,7 +49,7 @@ func GetGeneralDiscountByMenuType(menuType int) (GeneralDiscount, error) {
 	defer db.Close()
 
 	var gd GeneralDiscount
-	err := db.QueryRow("SELECT * FROM general_discount WHERE menu_type = $1", menuType).Scan(&gd.ID, &gd.MenuType, &gd.Value, &gd.Unit, &gd.CreatedAt, &gd.UpdatedAt, &gd.TitleUz, &gd.TitleRu, &gd.TitleEn)
+	err := db.QueryRow("SELECT id, menu_type, value, unit, created_at, updated_at, title_uz, title_ru, title_en FROM general_discount WHERE menu_type = $1", menuType).Scan(&gd.ID, &gd.MenuType, &gd.Value, &gd.Unit, &gd.CreatedAt, &gd.UpdatedAt, &gd.TitleUz, &gd.TitleRu, &gd.TitleEn)
 	if err != nil {
 		return GeneralDiscount{}, err
 	}

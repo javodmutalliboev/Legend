@@ -69,7 +69,7 @@ func authenticate(email, pass string) (bool, error) {
 	defer database.Close()
 
 	// query
-	row := database.QueryRow("SELECT * FROM admin WHERE email = $1", email)
+	row := database.QueryRow("SELECT id, name, surname, email, password, created_at, updated_at FROM admin WHERE email = $1", email)
 
 	// admin
 	var admin model.Admin

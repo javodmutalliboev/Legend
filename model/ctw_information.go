@@ -48,7 +48,7 @@ func GetCTWInformation() (CTWInformation, error) {
 	defer db.Close()
 
 	var ctw CTWInformation
-	err := db.QueryRow("SELECT * FROM ctw_information").Scan(&ctw.ID, &ctw.HeadingUz, &ctw.HeadingRu, &ctw.HeadingEn, &ctw.DescriptionUz, &ctw.DescriptionRu, &ctw.DescriptionEn, &ctw.CreatedAt, &ctw.UpdatedAt)
+	err := db.QueryRow("SELECT id, heading_uz, heading_ru, heading_en, description_uz, description_ru, description_en, created_at, updated_at FROM ctw_information").Scan(&ctw.ID, &ctw.HeadingUz, &ctw.HeadingRu, &ctw.HeadingEn, &ctw.DescriptionUz, &ctw.DescriptionRu, &ctw.DescriptionEn, &ctw.CreatedAt, &ctw.UpdatedAt)
 	if err != nil {
 		return ctw, err
 	}

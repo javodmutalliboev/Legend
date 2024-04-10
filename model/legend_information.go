@@ -48,7 +48,7 @@ func GetLegendInformation() (LegendInformation, error) {
 	defer db.Close()
 
 	var li LegendInformation
-	err := db.QueryRow("SELECT * FROM legend_information").Scan(&li.ID, &li.HeadingUz, &li.HeadingRu, &li.HeadingEn, &li.DescriptionUz, &li.DescriptionRu, &li.DescriptionEn, &li.CreatedAt, &li.UpdatedAt)
+	err := db.QueryRow("SELECT id, heading_uz, heading_ru, heading_en, description_uz, description_ru, description_en, created_at, updated_at FROM legend_information").Scan(&li.ID, &li.HeadingUz, &li.HeadingRu, &li.HeadingEn, &li.DescriptionUz, &li.DescriptionRu, &li.DescriptionEn, &li.CreatedAt, &li.UpdatedAt)
 	if err != nil {
 		return li, err
 	}

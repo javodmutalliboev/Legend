@@ -6,7 +6,7 @@ func GetMenuTypes() ([]MenuType, error) {
 	db := database.DB()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT * FROM menu_type ORDER BY id")
+	rows, err := db.Query("SELECT id, title_uz, title_ru, title_en, created_at, updated_at FROM menu_type ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
