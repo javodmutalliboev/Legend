@@ -17,6 +17,9 @@ func Auth() Middleware {
 				return
 			}
 
+			ses.Options.MaxAge = 24 * 60 * 60 // 24 hours
+			ses.Save(r, w)
+
 			// Call the next middleware/handler in chain
 			f(w, r)
 		}
