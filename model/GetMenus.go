@@ -7,7 +7,7 @@ func GetMenus(menuType int) ([]Menu, error) {
 	defer database.Close()
 
 	// get menus with its children taken place in their corresponding parent
-	rows, err := database.Query("SELECT id, parent_id, title_uz, title_ru, title_en, created_at, updated_at, menu_type FROM menu WHERE parent_id IS NULL AND type = $1 ORDER BY id", menuType)
+	rows, err := database.Query("SELECT id, parent_id, title_uz, title_ru, title_en, created_at, updated_at, type FROM menu WHERE parent_id IS NULL AND type = $1 ORDER BY id", menuType)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func getChildren(m *Menu) error {
 	database := database.DB()
 	defer database.Close()
 
-	rows, err := database.Query("SELECT id, parent_id, title_uz, title_ru, title_en, created_at, updated_at, menu_type FROM menu WHERE parent_id = $1 AND type = $2 ORDER BY id", m.ID, m.Type)
+	rows, err := database.Query("SELECT id, parent_id, title_uz, title_ru, title_en, created_at, updated_at, type FROM menu WHERE parent_id = $1 AND type = $2 ORDER BY id", m.ID, m.Type)
 	if err != nil {
 		return err
 	}

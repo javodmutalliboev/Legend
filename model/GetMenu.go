@@ -7,7 +7,7 @@ func GetMenu(id int) (*Menu, error) {
 	defer db.Close()
 
 	var menu Menu
-	err := db.QueryRow("SELECT id, parent_id, title_uz, title_ru, title_en, created_at, updated_at, menu_type FROM menu WHERE id = $1", id).Scan(&menu.ID, &menu.ParentID, &menu.TitleUz, &menu.TitleRu, &menu.TitleEn, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
+	err := db.QueryRow("SELECT id, parent_id, title_uz, title_ru, title_en, created_at, updated_at, type FROM menu WHERE id = $1", id).Scan(&menu.ID, &menu.ParentID, &menu.TitleUz, &menu.TitleRu, &menu.TitleEn, &menu.CreatedAt, &menu.UpdatedAt, &menu.Type)
 	if err != nil {
 		return nil, err
 	}
