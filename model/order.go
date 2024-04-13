@@ -119,3 +119,27 @@ func GetOrder(id int64) (*Order, error) {
 
 	return o, nil
 }
+
+func (o *Order) ToggleCanceled() error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec(`UPDATE "order" SET canceled = NOT canceled WHERE id = $1`, o.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *Order) ToggleDelivered() error {
+	db := database.DB()
+	defer db.Close()
+
+	_, err := db.Exec(`UPDATE "order" SET delivered = NOT delivered WHERE id = $1`, o.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

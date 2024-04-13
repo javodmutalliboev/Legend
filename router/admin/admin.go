@@ -110,5 +110,11 @@ func AdminRouter() *mux.Router {
 	// GET /orders?page={page:[0-9]+}&limit={limit:[0-9]+} will return orders
 	router.HandleFunc("/orders", middleware.Chain(GetOrders(), middleware.Auth())).Methods("GET")
 
+	// PATCH /order/canceled will update the canceled status of an order
+	router.HandleFunc("/order/canceled", middleware.Chain(UpdateOrderCanceled(), middleware.Auth())).Methods("PATCH")
+
+	// PATCH /order/delivered will update the delivered status of an order
+	router.HandleFunc("/order/delivered", middleware.Chain(UpdateOrderDelivered(), middleware.Auth())).Methods("PATCH")
+
 	return router
 }

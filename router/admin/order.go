@@ -1,9 +1,11 @@
 package admin
 
 import (
+	"Legend/interface_package"
 	"Legend/model"
 	"Legend/response"
 	"Legend/utils"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -60,5 +62,47 @@ func GetOrders() http.HandlerFunc {
 		data["orders"] = orders
 
 		response.NewResponse("success", http.StatusOK, data).Send(w)
+	}
+}
+
+func UpdateOrderCanceled() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var order interface_package.Order = &model.Order{}
+		err := json.NewDecoder(r.Body).Decode(order)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err.Error())
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request body").Send(w)
+			return
+		}
+
+		err = order.ToggleCanceled()
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err.Error())
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Order canceled status updated").Send(w)
+	}
+}
+
+func UpdateOrderDelivered() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var order interface_package.Order = &model.Order{}
+		err := json.NewDecoder(r.Body).Decode(order)
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err.Error())
+			response.NewResponse("error", http.StatusBadRequest, "Invalid request body").Send(w)
+			return
+		}
+
+		err = order.ToggleDelivered()
+		if err != nil {
+			log.Printf("%s: %s", r.URL.Path, err.Error())
+			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
+			return
+		}
+
+		response.NewResponse("success", http.StatusOK, "Order delivered status updated").Send(w)
 	}
 }
