@@ -1,5 +1,6 @@
 package interface_package
 
 type Order interface {
-	Create() error
+	Create() (*int64, error)
+	GetGoods() error
 }

@@ -48,5 +48,8 @@ func ClientRouter() *mux.Router {
 	// POST /order will create an order
 	router.HandleFunc("/order", CreateOrder()).Methods("POST")
 
+	// GET /order/list?id={id:[0-9]+}&id={id:[0-9]+}...
+	router.HandleFunc("/order/list", GetOrders()).Methods("GET")
+
 	return router
 }

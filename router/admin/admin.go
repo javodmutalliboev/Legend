@@ -107,5 +107,8 @@ func AdminRouter() *mux.Router {
 	// GET /goods/with_discount/{menu_type:[0-9]+} will return goods with discount
 	router.HandleFunc("/goods/with_discount/{menu_type:[0-9]+}", middleware.Chain(shared.GetGoodsWithDiscount(), middleware.Auth())).Methods("GET")
 
+	// GET /orders?page={page:[0-9]+}&limit={limit:[0-9]+} will return orders
+	router.HandleFunc("/orders", middleware.Chain(GetOrders(), middleware.Auth())).Methods("GET")
+
 	return router
 }
