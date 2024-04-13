@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS order_goods;
+
+DROP TABLE IF EXISTS order;
