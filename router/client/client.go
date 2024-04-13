@@ -45,5 +45,8 @@ func ClientRouter() *mux.Router {
 	// GET /menu/{id:[0-9]+}/goods will return goods of a menu
 	router.HandleFunc("/menu/{id:[0-9]+}/goods", shared.GetMenuGoods()).Methods("GET")
 
+	// POST /order will create an order
+	router.HandleFunc("/order", CreateOrder()).Methods("POST")
+
 	return router
 }
