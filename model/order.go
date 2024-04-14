@@ -12,6 +12,7 @@ type Order struct {
 	CustomerAddress  string       `json:"customer_address"`
 	CustomerPhone    string       `json:"customer_phone"`
 	CustomerPhone2   string       `json:"customer_phone2"`
+	TotalPrice       float64      `json:"total_price"`
 	Canceled         bool         `json:"canceled"`
 	Delivered        bool         `json:"delivered"`
 	CreatedAt        string       `json:"created_at"`
@@ -26,7 +27,7 @@ func (o *Order) Create() (*int64, error) {
 		return nil, err
 	}
 
-	err = tx.QueryRow(`INSERT INTO "order" (customer_name, customer_surname, customer_region, customer_district, customer_address, customer_phone, customer_phone2) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, o.CustomerName, o.CustomerSurname, o.CustomerRegion, o.CustomerDistrict, o.CustomerAddress, o.CustomerPhone, o.CustomerPhone2).Scan(&o.ID)
+	err = tx.QueryRow(`INSERT INTO "order" (customer_name, customer_surname, customer_region, customer_district, customer_address, customer_phone, customer_phone2, total_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`, o.CustomerName, o.CustomerSurname, o.CustomerRegion, o.CustomerDistrict, o.CustomerAddress, o.CustomerPhone, o.CustomerPhone2, o.TotalPrice).Scan(&o.ID)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -52,7 +53,7 @@ func GetOrders(delivered bool) ([]*Order, error) {
 	db := database.DB()
 	defer db.Close()
 
-	rows, err := db.Query(`SELECT id, customer_name, customer_surname, customer_region, customer_district, customer_address, customer_phone, customer_phone2, canceled, delivered, created_at FROM "order" WHERE delivered = $1 ORDER BY created_at DESC`, delivered)
+	rows, err := db.Query(`SELECT id, customer_name, customer_surname, customer_region, customer_district, customer_address, customer_phone, customer_phone2, total_price, canceled, delivered, created_at FROM "order" WHERE delivered = $1 ORDER BY created_at DESC`, delivered)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,7 @@ func GetOrders(delivered bool) ([]*Order, error) {
 	orders := []*Order{}
 	for rows.Next() {
 		var o Order
-		err = rows.Scan(&o.ID, &o.CustomerName, &o.CustomerSurname, &o.CustomerRegion, &o.CustomerDistrict, &o.CustomerAddress, &o.CustomerPhone, &o.CustomerPhone2, &o.Canceled, &o.Delivered, &o.CreatedAt)
+		err = rows.Scan(&o.ID, &o.CustomerName, &o.CustomerSurname, &o.CustomerRegion, &o.CustomerDistrict, &o.CustomerAddress, &o.CustomerPhone, &o.CustomerPhone2, &o.TotalPrice, &o.Canceled, &o.Delivered, &o.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -107,7 +108,7 @@ func GetOrder(id int64) (*Order, error) {
 	defer db.Close()
 
 	o := &Order{}
-	err := db.QueryRow(`SELECT id, customer_name, customer_surname, customer_region, customer_district, customer_address, customer_phone, customer_phone2, canceled, delivered, created_at FROM "order" WHERE id = $1`, id).Scan(&o.ID, &o.CustomerName, &o.CustomerSurname, &o.CustomerRegion, &o.CustomerDistrict, &o.CustomerAddress, &o.CustomerPhone, &o.CustomerPhone2, &o.Canceled, &o.Delivered, &o.CreatedAt)
+	err := db.QueryRow(`SELECT id, customer_name, customer_surname, customer_region, customer_district, customer_address, customer_phone, customer_phone2, total_price, canceled, delivered, created_at FROM "order" WHERE id = $1`, id).Scan(&o.ID, &o.CustomerName, &o.CustomerSurname, &o.CustomerRegion, &o.CustomerDistrict, &o.CustomerAddress, &o.CustomerPhone, &o.CustomerPhone2, &o.TotalPrice, &o.Canceled, &o.Delivered, &o.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
