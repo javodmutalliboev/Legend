@@ -474,7 +474,7 @@ func GetMenuGoods(menu_id, page, limit int) (*GoodsWrapper, error) {
 	db := database.DB()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT id FROM goods WHERE menu_id = $1 ORDER BY id", menu_id)
+	rows, err := db.Query("SELECT id, menu_id, name_uz, name_ru, name_en, brand_uz, brand_ru, brand_en, sizes, price, discount, colors_uz, colors_ru, colors_en, description_uz, description_ru, description_en, created_at, updated_at FROM goods WHERE menu_id = $1 ORDER BY id", menu_id)
 	if err != nil {
 		return nil, err
 	}
@@ -483,7 +483,7 @@ func GetMenuGoods(menu_id, page, limit int) (*GoodsWrapper, error) {
 	var goods []Goods
 	for rows.Next() {
 		var g Goods
-		err = rows.Scan(&g.ID)
+		err = rows.Scan(&g.ID, &g.MenuID, &g.NameUz, &g.NameRu, &g.NameEn, &g.BrandUz, &g.BrandRu, &g.BrandEn, pq.Array(&g.Sizes), &g.Price, &g.Discount, pq.Array(&g.ColorsUz), pq.Array(&g.ColorsRu), pq.Array(&g.ColorsEn), &g.DescriptionUz, &g.DescriptionRu, &g.DescriptionEn, &g.CreatedAt, &g.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
