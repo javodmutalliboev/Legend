@@ -116,5 +116,23 @@ func AdminRouter() *mux.Router {
 	// PATCH /order/delivered will update the delivered status of an order
 	router.HandleFunc("/order/delivered", middleware.Chain(UpdateOrderDelivered(), middleware.Auth())).Methods("PATCH")
 
+	// POST /payment_method will create a new payment method
+	router.HandleFunc("/payment_method", middleware.Chain(CreatePaymentMethod(), middleware.Auth())).Methods("POST")
+
+	// GET /payment_method/list will return all payment methods
+	router.HandleFunc("/payment_method/list", middleware.Chain(shared.GetPaymentMethods(), middleware.Auth())).Methods("GET")
+
+	// GET /payment_method/{id:[0-9]+} will return a payment method
+	router.HandleFunc("/payment_method/{id:[0-9]+}", middleware.Chain(GetPaymentMethod(), middleware.Auth())).Methods("GET")
+
+	// GET /payment_method/{id:[0-9]+}/logo will return the logo of a payment method
+	router.HandleFunc("/payment_method/{id:[0-9]+}/logo", middleware.Chain(shared.GetPaymentMethodLogo(), middleware.Auth())).Methods("GET")
+
+	// PATCH /payment_method will update a payment method
+	router.HandleFunc("/payment_method", middleware.Chain(UpdatePaymentMethod(), middleware.Auth())).Methods("PATCH")
+
+	// DELETE /payment_method/{id:[0-9]+} will delete a payment method
+	router.HandleFunc("/payment_method/{id:[0-9]+}", middleware.Chain(DeletePaymentMethod(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }

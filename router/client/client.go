@@ -51,5 +51,11 @@ func ClientRouter() *mux.Router {
 	// GET /order/list?id={id:[0-9]+}&id={id:[0-9]+}...
 	router.HandleFunc("/order/list", GetOrders()).Methods("GET")
 
+	// GET /payment_method/list will return all payment methods
+	router.HandleFunc("/payment_method/list", shared.GetPaymentMethods()).Methods("GET")
+
+	// GET /payment_method/{id:[0-9]+}/logo will return a logo of a payment method
+	router.HandleFunc("/payment_method/{id:[0-9]+}/logo", shared.GetPaymentMethodLogo()).Methods("GET")
+
 	return router
 }

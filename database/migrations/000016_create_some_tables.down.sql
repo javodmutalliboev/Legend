@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS payment_method CASCADE;
+
+DROP TABLE IF EXISTS social_network CASCADE;

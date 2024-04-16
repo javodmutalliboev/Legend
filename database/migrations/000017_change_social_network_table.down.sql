@@ -1,0 +1,1 @@
+ALTER TABLE social_network DROP COLUMN url;
