@@ -134,5 +134,23 @@ func AdminRouter() *mux.Router {
 	// DELETE /payment_method/{id:[0-9]+} will delete a payment method
 	router.HandleFunc("/payment_method/{id:[0-9]+}", middleware.Chain(DeletePaymentMethod(), middleware.Auth())).Methods("DELETE")
 
+	// POST /social_network will create a new social network
+	router.HandleFunc("/social_network", middleware.Chain(CreateSocialNetwork(), middleware.Auth())).Methods("POST")
+
+	// GET /social_network/list will return all social networks
+	router.HandleFunc("/social_network/list", middleware.Chain(shared.GetSocialNetworks(), middleware.Auth())).Methods("GET")
+
+	// GET /social_network/{id:[0-9]+} will return a social network
+	router.HandleFunc("/social_network/{id:[0-9]+}", middleware.Chain(GetSocialNetwork(), middleware.Auth())).Methods("GET")
+
+	// GET /social_network/{id:[0-9]+}/icon will return the icon of a social network
+	router.HandleFunc("/social_network/{id:[0-9]+}/icon", middleware.Chain(shared.GetSocialNetworkIcon(), middleware.Auth())).Methods("GET")
+
+	// PATCH /social_network will update a social network
+	router.HandleFunc("/social_network", middleware.Chain(UpdateSocialNetwork(), middleware.Auth())).Methods("PATCH")
+
+	// DELETE /social_network/{id:[0-9]+} will delete a social network
+	router.HandleFunc("/social_network/{id:[0-9]+}", middleware.Chain(DeleteSocialNetwork(), middleware.Auth())).Methods("DELETE")
+
 	return router
 }

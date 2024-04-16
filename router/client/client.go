@@ -57,5 +57,11 @@ func ClientRouter() *mux.Router {
 	// GET /payment_method/{id:[0-9]+}/logo will return a logo of a payment method
 	router.HandleFunc("/payment_method/{id:[0-9]+}/logo", shared.GetPaymentMethodLogo()).Methods("GET")
 
+	// GET /social_network/list will return all social networks
+	router.HandleFunc("/social_network/list", shared.GetSocialNetworks()).Methods("GET")
+
+	// GET /social_network/{id:[0-9]+}/icon will return an icon of a social network
+	router.HandleFunc("/social_network/{id:[0-9]+}/icon", shared.GetSocialNetworkIcon()).Methods("GET")
+
 	return router
 }

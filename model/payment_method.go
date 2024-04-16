@@ -105,6 +105,10 @@ func (pm *PaymentMethod) Update() error {
 		i++
 	}
 
+	if len(fields) == 0 {
+		return fmt.Errorf("no values to update")
+	}
+
 	// build the SQL query
 	query := fmt.Sprintf("UPDATE payment_method SET %s, updated_at = NOW() WHERE id = $%d", strings.Join(fields, ", "), i)
 	args = append(args, pm.ID)

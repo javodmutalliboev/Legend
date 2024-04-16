@@ -13,9 +13,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreatePaymentMethod() http.HandlerFunc {
+func CreateSocialNetwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var paymentMethod interface_package.PaymentMethod = &model.PaymentMethod{}
+		var socialNetwork interface_package.SocialNetwork = &model.SocialNetwork{}
 
 		if r.FormValue("name") == "" {
 			log.Printf("%s: %s", r.URL.Path, "name is required")
@@ -23,28 +23,34 @@ func CreatePaymentMethod() http.HandlerFunc {
 			return
 		}
 
-		_, logo_header, err := r.FormFile("logo")
+		if r.FormValue("url") == "" {
+			log.Printf("%s: %s", r.URL.Path, "url is required")
+			response.NewResponse("error", http.StatusBadRequest, "url is required").Send(w)
+			return
+		}
+
+		_, icon_header, err := r.FormFile("icon")
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
-			response.NewResponse("error", http.StatusBadRequest, "logo is required").Send(w)
+			response.NewResponse("error", http.StatusBadRequest, "icon is required").Send(w)
 			return
 		}
 
-		if !strings.HasPrefix(logo_header.Header.Get("Content-Type"), "image/") {
-			log.Printf("%s: %s", r.URL.Path, "logo file is not an image")
-			response.NewResponse("error", http.StatusBadRequest, "logo file is not an image").Send(w)
+		if !strings.HasPrefix(icon_header.Header.Get("Content-Type"), "image/") {
+			log.Printf("%s: %s", r.URL.Path, "icon file is not an image")
+			response.NewResponse("error", http.StatusBadRequest, "icon file is not an image").Send(w)
 			return
 		}
 
-		if logo_header.Size > 1024*1024 { // 1MB
-			log.Printf("%s: %s", r.URL.Path, "logo file size is larger than 1MB")
-			response.NewResponse("error", http.StatusBadRequest, "logo file size is larger than 1MB").Send(w)
+		if icon_header.Size > 1024*1024 { // 1MB
+			log.Printf("%s: %s", r.URL.Path, "icon file size is larger than 1MB")
+			response.NewResponse("error", http.StatusBadRequest, "icon file size is larger than 1MB").Send(w)
 			return
 		}
 
-		var logo []byte
+		var icon []byte
 		{
-			f, err := logo_header.Open()
+			f, err := icon_header.Open()
 			if err != nil {
 				log.Printf("%s: %s", r.URL.Path, err)
 				response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
@@ -52,7 +58,7 @@ func CreatePaymentMethod() http.HandlerFunc {
 			}
 			defer f.Close()
 
-			logo, err = io.ReadAll(f)
+			icon, err = io.ReadAll(f)
 			if err != nil {
 				log.Printf("%s: %s", r.URL.Path, err)
 				response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
@@ -60,23 +66,24 @@ func CreatePaymentMethod() http.HandlerFunc {
 			}
 		}
 
-		paymentMethod = &model.PaymentMethod{
+		socialNetwork = &model.SocialNetwork{
 			Name: r.FormValue("name"),
-			Logo: logo,
+			Icon: icon,
+			URL:  r.FormValue("url"),
 		}
 
-		err = paymentMethod.Create()
+		err = socialNetwork.Create()
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return
 		}
 
-		response.NewResponse("success", http.StatusCreated, "A new payment method created").Send(w)
+		response.NewResponse("success", http.StatusCreated, "A new social network created").Send(w)
 	}
 }
 
-func GetPaymentMethod() http.HandlerFunc {
+func GetSocialNetwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -86,20 +93,21 @@ func GetPaymentMethod() http.HandlerFunc {
 			return
 		}
 
-		paymentMethod, err := model.GetPaymentMethod(id)
+		// Get a social network
+		socialNetwork, err := model.GetSocialNetwork(id)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return
 		}
 
-		response.NewResponse("success", http.StatusOK, paymentMethod).Send(w)
+		response.NewResponse("success", http.StatusOK, socialNetwork).Send(w)
 	}
 }
 
-func UpdatePaymentMethod() http.HandlerFunc {
+func UpdateSocialNetwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var paymentMethod interface_package.PaymentMethod = &model.PaymentMethod{}
+		var socialNetwork interface_package.SocialNetwork = &model.SocialNetwork{}
 
 		if r.FormValue("id") == "" {
 			log.Printf("%s: %s", r.URL.Path, "id is required")
@@ -114,31 +122,35 @@ func UpdatePaymentMethod() http.HandlerFunc {
 			return
 		}
 
-		paymentMethod = &model.PaymentMethod{
+		socialNetwork = &model.SocialNetwork{
 			ID: id,
 		}
 
 		if r.FormValue("name") != "" {
-			paymentMethod.(*model.PaymentMethod).Name = r.FormValue("name")
+			socialNetwork.(*model.SocialNetwork).Name = r.FormValue("name")
 		}
 
-		_, logo_header, err := r.FormFile("logo")
+		if r.FormValue("url") != "" {
+			socialNetwork.(*model.SocialNetwork).URL = r.FormValue("url")
+		}
+
+		_, icon_header, err := r.FormFile("icon")
 		if err == nil {
-			if !strings.HasPrefix(logo_header.Header.Get("Content-Type"), "image/") {
-				log.Printf("%s: %s", r.URL.Path, "logo file is not an image")
-				response.NewResponse("error", http.StatusBadRequest, "logo file is not an image").Send(w)
+			if !strings.HasPrefix(icon_header.Header.Get("Content-Type"), "image/") {
+				log.Printf("%s: %s", r.URL.Path, "icon file is not an image")
+				response.NewResponse("error", http.StatusBadRequest, "icon file is not an image").Send(w)
 				return
 			}
 
-			if logo_header.Size > 1024*1024 { // 1MB
-				log.Printf("%s: %s", r.URL.Path, "logo file size is larger than 1MB")
-				response.NewResponse("error", http.StatusBadRequest, "logo file size is larger than 1MB").Send(w)
+			if icon_header.Size > 1024*1024 { // 1MB
+				log.Printf("%s: %s", r.URL.Path, "icon file size is larger than 1MB")
+				response.NewResponse("error", http.StatusBadRequest, "icon file size is larger than 1MB").Send(w)
 				return
 			}
 
-			var logo []byte
+			var icon []byte
 			{
-				f, err := logo_header.Open()
+				f, err := icon_header.Open()
 				if err != nil {
 					log.Printf("%s: %s", r.URL.Path, err)
 					response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
@@ -146,7 +158,7 @@ func UpdatePaymentMethod() http.HandlerFunc {
 				}
 				defer f.Close()
 
-				logo, err = io.ReadAll(f)
+				icon, err = io.ReadAll(f)
 				if err != nil {
 					log.Printf("%s: %s", r.URL.Path, err)
 					response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
@@ -154,10 +166,10 @@ func UpdatePaymentMethod() http.HandlerFunc {
 				}
 			}
 
-			paymentMethod.(*model.PaymentMethod).Logo = logo
+			socialNetwork.(*model.SocialNetwork).Icon = icon
 		}
 
-		err = paymentMethod.Update()
+		err = socialNetwork.Update()
 		if err != nil {
 			if err.Error() == "no values to update" {
 				log.Printf("%s: %s", r.URL.Path, err)
@@ -169,11 +181,11 @@ func UpdatePaymentMethod() http.HandlerFunc {
 			return
 		}
 
-		response.NewResponse("success", http.StatusOK, "Payment method updated").Send(w)
+		response.NewResponse("success", http.StatusOK, "Social network updated").Send(w)
 	}
 }
 
-func DeletePaymentMethod() http.HandlerFunc {
+func DeleteSocialNetwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -183,13 +195,13 @@ func DeletePaymentMethod() http.HandlerFunc {
 			return
 		}
 
-		err = model.DeletePaymentMethod(id)
+		err = model.DeleteSocialNetwork(id)
 		if err != nil {
 			log.Printf("%s: %s", r.URL.Path, err)
 			response.NewResponse("error", http.StatusInternalServerError, "Internal server error").Send(w)
 			return
 		}
 
-		response.NewResponse("success", http.StatusOK, "Payment method deleted").Send(w)
+		response.NewResponse("success", http.StatusOK, "Social network deleted").Send(w)
 	}
 }
