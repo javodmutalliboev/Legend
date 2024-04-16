@@ -3,8 +3,10 @@ package main
 import (
 	"Legend/developer"
 	"Legend/router"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -21,5 +23,7 @@ func main() {
 
 	go func() { developer.CreateAdminCLI() }()
 
-	http.ListenAndServe(":8080", router)
+	LegendPort := os.Getenv("LEGEND_PORT")
+
+	http.ListenAndServe(fmt.Sprintf(":%s", LegendPort), router)
 }
