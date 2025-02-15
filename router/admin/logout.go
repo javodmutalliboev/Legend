@@ -10,7 +10,7 @@ import (
 func Logout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ses := session.Session(r)
-		ses.Options.MaxAge = -1
+		session.SaveOptions(ses, -1)
 		err := ses.Save(r, w)
 		if err != nil {
 			log.Printf("%s: Error saving session: %v", r.URL.Path, err)
