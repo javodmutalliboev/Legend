@@ -38,7 +38,7 @@ func SaveOptions(session *sessions.Session, MaxAge int /* in seconds */) {
 		MaxAge:/* 1 day */ MaxAge,
 		HttpOnly: true,
 		Secure:   true,
-		Domain:   "online-dukon-admin.netlify.app",
+		Domain:   os.Getenv("ADMIN_ORIGIN_COOKIE"),
 		SameSite: http.SameSiteNoneMode,
 	}
 }
