@@ -33,14 +33,12 @@ func Session(r *http.Request) *sessions.Session {
 }
 
 func SaveOptions(session *sessions.Session, MaxAge int /* in seconds */) {
-	log.Printf("ADMIN_ORIGIN_COOKIE: %s\n", os.Getenv("ADMIN_ORIGIN_COOKIE"))
-
 	session.Options = &sessions.Options{
 		Path: "/",
 		MaxAge:/* 1 day */ MaxAge,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 		Domain:   os.Getenv("ADMIN_ORIGIN_COOKIE"),
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteNoneMode,
 	}
 }
