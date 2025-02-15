@@ -37,8 +37,8 @@ func SaveOptions(session *sessions.Session, MaxAge int /* in seconds */) {
 		Path: "/",
 		MaxAge:/* 1 day */ MaxAge,
 		HttpOnly: true,
-		Secure:   false,
-		Domain:   os.Getenv("ADMIN_ORIGIN"),
+		Secure:   true,
+		Domain:   os.Getenv("ADMIN_ORIGIN_COOKIE"),
 		SameSite: http.SameSiteNoneMode,
 	}
 }
