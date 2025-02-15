@@ -39,6 +39,6 @@ func SaveOptions(session *sessions.Session, MaxAge int /* in seconds */) {
 		HttpOnly: true,
 		Secure:   true,
 		Domain:   os.Getenv("ADMIN_ORIGIN"),
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteNoneMode,
 	}
 }
